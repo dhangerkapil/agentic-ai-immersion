@@ -451,7 +451,7 @@ Comprehensive evaluation, observability, and security testing for AI agents.
 | **Agent Framework GitHub** | [github.com/microsoft/agent-framework](https://github.com/microsoft/agent-framework) |
 | **Azure AI Services** | [learn.microsoft.com/azure/ai-services](https://learn.microsoft.com/azure/ai-services/) |
 | **Video Tutorials** | [AI Show](https://learn.microsoft.com/en-us/shows/ai-show/) |
-| **GitHub Issues** | [Report bugs or request features](https://github.com/dhangerkapil/agentic-ai-lab/issues) |
+| **GitHub Issues** | [Report bugs or request features](https://github.com/dhangerkapil/agentic-ai-immersion/issues) |
 
 ---
 
@@ -471,7 +471,7 @@ Please review our [Contributing Guide](CONTRIBUTING.md) for code style, testing 
 ## 📄 License
 
 **License:** MIT License  
-**Repository:** [github.com/dhangerkapil/agentic-ai-lab](https://github.com/dhangerkapil/agentic-ai-lab)
+**Repository:** [github.com/dhangerkapil/agentic-ai-immersion](https://github.com/dhangerkapil/agentic-ai-immersion)
 
 ---
 
