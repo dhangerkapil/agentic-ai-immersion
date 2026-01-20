@@ -1,4 +1,4 @@
-# 🚀 Agentic AI Immersion Day
+# 🚀 Agentic AI Immersion Workshop
 
 [![Microsoft Foundry](https://img.shields.io/badge/Microsoft-Foundry-blue?style=for-the-badge&logo=microsoft)](https://ai.azure.com)
 [![Python](https://img.shields.io/badge/Python-3.10+-green?style=for-the-badge&logo=python)](https://python.org)
