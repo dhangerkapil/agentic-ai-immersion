@@ -1,0 +1,12 @@
+# Core Agent Framework packages
+agent-framework-core
+agent-framework-azure-ai
+
+# Azure AI Agent Server SDK for hosted agent deployment
+azure-ai-agentserver-agentframework
+
+# Azure Identity for authentication
+azure-identity
+
+# Environment variable management
+python-dotenv

@@ -1,0 +1,33 @@
+EMPLOYEE DIRECTORY - COMPANY ABC
+
+SALES DEPARTMENT:
+John Smith - Age: 28 - Position: Sales Representative
+Contact: john.smith@company.com - Phone: (555) 123-4567
+Skills: Customer relations, Product demos, Account management
+
+Mike Davis - Age: 35 - Position: Sales Manager  
+Contact: mike.davis@company.com - Phone: (555) 345-6789
+Skills: Team leadership, Strategic planning, Key account management
+
+MARKETING DEPARTMENT:
+Sarah Johnson - Age: 24 - Position: Marketing Coordinator
+Contact: sarah.johnson@company.com - Phone: (555) 234-5678
+Skills: Social media, Content creation, Campaign management
+
+CUSTOMER SERVICE DEPARTMENT:
+Emily Brown - Age: 22 - Position: Support Specialist
+Contact: emily.brown@company.com - Phone: (555) 456-7890
+Skills: Problem solving, Customer communication, Ticket management
+
+IT DEPARTMENT:
+David Wilson - Age: 31 - Position: Software Developer
+Contact: david.wilson@company.com - Phone: (555) 567-8901
+Skills: Python, JavaScript, Database management
+
+HR DEPARTMENT:
+Lisa Garcia - Age: 29 - Position: HR Specialist
+Contact: lisa.garcia@company.com - Phone: (555) 678-9012
+Skills: Recruitment, Employee relations, Policy development
+
+TOTAL EMPLOYEES: 6
+LAST UPDATED: October 2024
