@@ -28,16 +28,16 @@
 
 This comprehensive workshop transforms you from an AI enthusiast into a Microsoft Foundry expert. Through progressive, hands-on modules, you'll master:
 
-| Module | Topics |
-|--------|--------|
-| **Foundation** | Setup, Authentication, Quick Start |
-| **Core AI** | Prompting, Embeddings, RAG |
-| **Agents** | File Search, Bing, Azure Functions, Multi-Agent |
-| **Foundry IQ** | Revolutionary agentic retrieval with knowledge bases |
-| **Advanced** | MCP Integration, Red Teaming, Agent Framework |
-| **Operations** | Observability, Evaluation, Fine-Tuning |
-| **Deployment** | Hosted Agents with Azure Developer CLI |
-| **Enterprise** | Content Safety, Responsible AI |
+| Module | Topics | Technology |
+|--------|--------|------------|
+| **Foundation** | Setup, Authentication, Quick Start | Azure AI Foundry, Azure AI Agents v2 |
+| **Core AI** | Prompting, Embeddings, RAG | Azure OpenAI, Azure AI Search |
+| **Agents** | File Search, Bing, Azure Functions, Multi-Agent | Code Interpreter, Bing Grounding, Multi-Agent Workflows |
+| **Foundry IQ** | Revolutionary agentic retrieval with knowledge bases | Foundry IQ, Knowledge Bases |
+| **Advanced** | MCP Integration, Red Teaming, Agent Framework | Foundry MCP Server, Microsoft Agent Framework |
+| **Operations** | Observability, Evaluation, Fine-Tuning | OpenTelemetry, Azure Monitor, Built-in Evaluators |
+| **Deployment** | Hosted Agents with Azure Developer CLI | Azure Developer CLI (azd), Hosted Agents |
+| **Enterprise** | Responsible AI | Red Team Testing, Content Safety |
 
 > **🎓 Format**: Intensive hands-on experience  
 > **🎯 Audience**: Developers, AI practitioners, and solution architects  
