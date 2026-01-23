@@ -240,7 +240,7 @@ cloud_evaluation_results.json
 evaluation_error_log.json
 fallback-results.json
 guidelines.md
-health_fitness_eval_data.jsonl
+banking_eval_data.jsonl
 evaluate_test_data.jsonl
 local_evaluation_results.json
 recipes.md
