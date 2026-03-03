@@ -341,6 +341,8 @@ Comprehensive evaluation, observability, and security testing for AI agents.
 
 📖 [Complete Guide](observability-and-evaluations/README.md)
 
+---
+
 ### 💼 Industry Use Cases
 
 For 49 real-world FSI use cases (banking, insurance, investment) mapped to each notebook, see [USE-CASES.md](USE-CASES.md).
