@@ -269,8 +269,6 @@ CRITICAL INSTRUCTIONS:
    - Architecture overview
 
 After implementation, run the tests and fix any issues until all tests pass.
-
-Implement now — write all the code.
 ````
 
 **What Copilot will produce from the Implementation step:**
