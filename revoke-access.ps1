@@ -1,14 +1,14 @@
 #!/usr/bin/env pwsh
 
 # ============================================================================
-# Grant workshop participant access to Azure AI Foundry
+# Revoke workshop participant access to Azure AI Foundry
 #
-# Assigns the "Cognitive Services Contributor" role on the AIServices account so that
-# participants can create and manage agents, threads, runs, and call model endpoints.
+# Removes the "Cognitive Services Contributor" role at both the AIServices
+# account scope and the project scope for each participant.
 #
 # Usage:
-#   pwsh grant-access.ps1                        # prompts for a list of emails
-#   pwsh grant-access.ps1 -EmailFile emails.txt  # reads emails from a file (one per line)
+#   pwsh revoke-access.ps1                        # prompts for a list of emails
+#   pwsh revoke-access.ps1 -EmailFile emails.txt  # reads emails from a file (one per line)
 #
 # Required role for caller: Owner or User Access Administrator on the
 # AIServices account (or its resource group / subscription).
@@ -42,14 +42,17 @@ function Invoke-AzJson {
 }
 
 # ---------------------------------------------------------------------------
-# 1. Login & subscription
+# 1. Banner
 # ---------------------------------------------------------------------------
 Write-Host ""
-Write-Host "╔════════════════════════════════════════════════════════════════╗" -ForegroundColor Cyan
-Write-Host "║   Grant Workshop Participant Access — Agentic AI Immersion     ║" -ForegroundColor Cyan
-Write-Host "╚════════════════════════════════════════════════════════════════╝" -ForegroundColor Cyan
+Write-Host "╔════════════════════════════════════════════════════════════════╗" -ForegroundColor Red
+Write-Host "║   Revoke Workshop Participant Access — Agentic AI Immersion    ║" -ForegroundColor Red
+Write-Host "╚════════════════════════════════════════════════════════════════╝" -ForegroundColor Red
 Write-Host ""
 
+# ---------------------------------------------------------------------------
+# 2. Read .env
+# ---------------------------------------------------------------------------
 Write-Step "Reading .env file..."
 
 $envFile = Join-Path $PSScriptRoot ".env"
@@ -58,7 +61,6 @@ if (-not (Test-Path $envFile)) {
     exit 1
 }
 
-# Parse key=value pairs, skipping comments and blanks
 $env = @{}
 Get-Content $envFile | Where-Object { $_ -match '^\s*[^#]\S+=\S' } | ForEach-Object {
     $parts = $_ -split '=', 2
@@ -78,8 +80,6 @@ if (-not $subId) {
     exit 1
 }
 
-# Derive the AIServices account scope by stripping /projects/<name> from the end
-# e.g. .../accounts/myaccount/projects/myproject  →  .../accounts/myaccount
 $accountScope = $projectResourceId -replace '/projects/[^/]+$', ''
 $projectScope = $projectResourceId
 
@@ -88,7 +88,7 @@ Write-Success "Account scope  : $accountScope"
 Write-Success "Project scope  : $projectScope"
 
 # ---------------------------------------------------------------------------
-# 2. Login & set subscription
+# 3. Login & set subscription
 # ---------------------------------------------------------------------------
 Write-Step "Verifying Azure login..."
 try { Invoke-Az @("account", "show") | Out-Null } catch {
@@ -136,15 +136,15 @@ if ($emails.Count -eq 0) {
 }
 
 Write-Host ""
-Write-Host "  Will assign 'Cognitive Services Contributor' to:" -ForegroundColor Cyan
+Write-Host "  Will remove 'Cognitive Services Contributor' from:" -ForegroundColor Cyan
 $emails | ForEach-Object { Write-Host "    - $_" -ForegroundColor Cyan }
 $go = Read-Host "`n  Proceed? (y/n)"
 if ($go -notmatch "^[Yy]$") { Write-Warn "Aborted."; exit 0 }
 
 # ---------------------------------------------------------------------------
-# 5. Assign roles
+# 5. Remove roles
 # ---------------------------------------------------------------------------
-Write-Step "Assigning roles..."
+Write-Step "Removing roles..."
 
 $succeeded = @()
 $failed    = @()
@@ -152,7 +152,6 @@ $failed    = @()
 foreach ($email in $emails) {
     Write-Host "  Processing $email..." -ForegroundColor DarkGray
 
-    # Look up the Entra object ID for the user
     try {
         $userId = (Invoke-AzJson @(
             "ad", "user", "show",
@@ -165,45 +164,36 @@ foreach ($email in $emails) {
         continue
     }
 
-    # Cognitive Services Contributor at both account and project scope covers all data plane
-    # operations (agents, OpenAI inference, embeddings, etc.). The project endpoint enforces
-    # its own RBAC check so the project scope assignment is required in addition to account scope.
-    $roleAssignments = @(
-        @{ Role = "Cognitive Services Contributor"; Scope = $accountScope; Label = "account" },
-        @{ Role = "Cognitive Services Contributor"; Scope = $projectScope; Label = "project" }
-    )
+    # List all role assignments for this user, then filter client-side.
+    # Passing --role with --all triggers an Azure CLI bug on non-standard scopes.
+    $assignments = @(Invoke-AzJson @(
+        "role", "assignment", "list",
+        "--assignee", $userId,
+        "--all"
+    )) | Where-Object { $_.roleDefinitionName -eq "Cognitive Services Contributor" }
+    $assignments = @($assignments)
 
-    $assignOk = $true
-    foreach ($ra in $roleAssignments) {
-        $existing = Invoke-AzJson @(
-            "role", "assignment", "list",
-            "--assignee", $userId,
-            "--role", $ra.Role,
-            "--scope", $ra.Scope,
-            "--query", "length(@)"
-        )
+    if ($assignments.Count -eq 0) {
+        Write-Warn "$email has no 'Cognitive Services Contributor' assignments — skipping"
+        $succeeded += $email
+        continue
+    }
 
-        if ($existing -gt 0) {
-            Write-Warn "$email already has '$($ra.Role)' at $($ra.Label) scope — skipping"
-            continue
-        }
-
+    $removeOk = $true
+    foreach ($assignment in $assignments) {
         try {
             Invoke-Az @(
-                "role", "assignment", "create",
-                "--assignee-object-id", $userId,
-                "--assignee-principal-type", "User",
-                "--role", $ra.Role,
-                "--scope", $ra.Scope
+                "role", "assignment", "delete",
+                "--ids", $assignment.id
             ) | Out-Null
-            Write-Success "$email assigned '$($ra.Role)' at $($ra.Label) scope"
+            Write-Success "$email removed from '$($assignment.roleDefinitionName)' at scope $($assignment.scope)"
         } catch {
-            Write-Err "Failed to assign '$($ra.Role)' for $email at $($ra.Label) scope"
-            $assignOk = $false
+            Write-Err "Failed to delete assignment $($assignment.id) for $email"
+            $removeOk = $false
         }
     }
 
-    if ($assignOk) { $succeeded += $email } else { $failed += $email }
+    if ($removeOk) { $succeeded += $email } else { $failed += $email }
 }
 
 # ---------------------------------------------------------------------------
@@ -211,7 +201,7 @@ foreach ($email in $emails) {
 # ---------------------------------------------------------------------------
 Write-Host ""
 Write-Host "╔════════════════════════════════════════════════════════════════╗" -ForegroundColor Green
-Write-Host "║   Role assignments complete                                    ║" -ForegroundColor Green
+Write-Host "║   Role removals complete                                       ║" -ForegroundColor Green
 Write-Host "╚════════════════════════════════════════════════════════════════╝" -ForegroundColor Green
 Write-Host ""
 
@@ -227,8 +217,4 @@ if ($failed.Count -gt 0) {
     $failed | ForEach-Object { Write-Host "    ✗ $_" -ForegroundColor Red }
 }
 
-Write-Host ""
-Write-Host "  Note: RBAC propagation typically takes 1–5 minutes." -ForegroundColor DarkGray
-Write-Host "  If participants still get PermissionDenied, have them re-authenticate:" -ForegroundColor DarkGray
-Write-Host "    az login --tenant $($env['TENANT_ID'])" -ForegroundColor DarkGray
 Write-Host ""

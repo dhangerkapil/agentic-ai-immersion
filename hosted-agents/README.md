@@ -36,9 +36,9 @@ Hosted Agents are containerized AI agents that run as fully managed services in 
 
 ### ⚠️ Region Availability
 
-**Important:** Hosted Agents is a preview feature currently available in **North Central US only**.
+**Important:** Hosted Agents is a preview feature available in select regions. This workshop provisions resources in **East US 2**, which is supported.
 
-If your AI Foundry project is in a different region, you'll get the error: `"Hosted Agents are not enabled in this region"`. In that case, you need to create a new project in **North Central US**.
+If your AI Foundry project is in a different region, you'll get the error: `"Hosted Agents are not enabled in this region"`. In that case, you need to create a new project in a supported region such as **East US 2**.
 
 Check the latest region support: [Hosted Agents Region Availability](https://learn.microsoft.com/en-us/azure/ai-foundry/agents/concepts/hosted-agents?view=foundry&tabs=cli#region-availability)
 
@@ -60,7 +60,7 @@ brew tap azure/azd && brew install azd
 ### Required Azure Resources
 
 You need the following resources:
-- Microsoft Foundry Project **(must be in North Central US region)**
+- Microsoft Foundry Project **(must be in a supported region — this workshop uses East US 2)**
 - Bing Grounding Connection (configured in your project)
 - Model Deployment (e.g., `gpt-4o`)
 
@@ -270,8 +270,8 @@ azd deploy
 
 **Cause:** Your AI Foundry project is in a region that doesn't support hosted agents.
 
-**Solution:** Currently, hosted agents are only available in **North Central US**. You need to:
-1. Create a new AI Foundry project in North Central US
+**Solution:** Hosted agents are only available in select regions. This workshop uses **East US 2**. You need to:
+1. Create a new AI Foundry project in East US 2 (or another supported region)
 2. Update your environment variables to point to the new project
 
 See: [Hosted Agents Region Availability](https://learn.microsoft.com/en-us/azure/ai-foundry/agents/concepts/hosted-agents?view=foundry&tabs=cli#region-availability)

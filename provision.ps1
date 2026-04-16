@@ -11,17 +11,19 @@ $ErrorActionPreference = "Stop"
 # ---------------------------------------------------------------------------
 # Output helpers
 # ---------------------------------------------------------------------------
-function Write-Step    { param([string]$msg) Write-Host "`n▶ $msg" -ForegroundColor Blue }
+function Write-Step { param([string]$msg) Write-Host "`n▶ $msg" -ForegroundColor Blue }
 function Write-Success { param([string]$msg) Write-Host "  ✓ $msg" -ForegroundColor Green }
-function Write-Warn    { param([string]$msg) Write-Host "  ⚠ $msg" -ForegroundColor Yellow }
-function Write-Err     { param([string]$msg) Write-Host "  ✗ $msg" -ForegroundColor Red }
+function Write-Warn { param([string]$msg) Write-Host "  ⚠ $msg" -ForegroundColor Yellow }
+function Write-Err { param([string]$msg) Write-Host "  ✗ $msg" -ForegroundColor Red }
 
 function Invoke-Az {
-    param([string[]]$Arguments)
+    param([string[]]$Arguments, [switch]$Silent)
     $output = az @Arguments 2>&1
     if ($LASTEXITCODE -ne 0) {
-        Write-Err "az $($Arguments -join ' ') failed:`n$output"
-        throw "Azure CLI error"
+        if (-not $Silent) {
+            Write-Err "az $($Arguments -join ' ') failed:`n$output"
+        }
+        throw "Azure CLI error: $output"
     }
     return $output
 }
@@ -31,27 +33,211 @@ function Invoke-AzJson {
     return (Invoke-Az ($Arguments + @("-o", "json"))) | ConvertFrom-Json
 }
 
+function Invoke-AzRestJson {
+    param(
+        [string]$Method,
+        [string]$Url,
+        [string]$Body = "",
+        [string]$ApiVersion = "",
+        [switch]$Silent
+    )
+
+    $arguments = @("rest", "--method", $Method, "--url", $Url)
+    if (-not [string]::IsNullOrWhiteSpace($ApiVersion)) {
+        $arguments += @("--uri-parameters", "api-version=$ApiVersion")
+    }
+    if (-not [string]::IsNullOrWhiteSpace($Body)) {
+        $tempFile = [System.IO.Path]::GetTempFileName()
+        try {
+            $utf8NoBom = [System.Text.UTF8Encoding]::new($false)
+            [System.IO.File]::WriteAllText($tempFile, $Body, $utf8NoBom)
+            $arguments += @("--headers", "Content-Type=application/json", "--body", "@$tempFile")
+            return Invoke-Az $arguments -Silent:$Silent
+        }
+        finally {
+            if (Test-Path $tempFile) {
+                Remove-Item $tempFile -Force -ErrorAction SilentlyContinue
+            }
+        }
+    }
+
+    return Invoke-Az $arguments -Silent:$Silent
+}
+
+function Invoke-AzRestJsonObject {
+    param(
+        [string]$Method,
+        [string]$Url,
+        [string]$Body = "",
+        [string]$ApiVersion = "",
+        [switch]$Silent
+    )
+
+    return (Invoke-AzRestJson -Method $Method -Url $Url -Body $Body -ApiVersion $ApiVersion -Silent:$Silent | ConvertFrom-Json)
+}
+
+function Invoke-AzRestWithRetry {
+    param(
+        [string]$Method,
+        [string]$Url,
+        [string]$Body = "",
+        [string]$ApiVersion = "",
+        [int]$MaxRetries = 3,
+        [int]$InitialDelaySeconds = 2
+    )
+
+    $delay = $InitialDelaySeconds
+    for ($attempt = 1; $attempt -le $MaxRetries; $attempt++) {
+        try {
+            return Invoke-AzRestJson -Method $Method -Url $Url -Body $Body -ApiVersion $ApiVersion
+        }
+        catch {
+            $errorMsg = $_.Exception.Message
+            # Retry on transient errors like ParentResourceNotFound or temporary unavailability
+            if ($attempt -lt $MaxRetries -and ($errorMsg -match "ParentResourceNotFound|Conflict|BadGateway|ServiceUnavailable|RequestTimeout")) {
+                Write-Host "    Retry in ${delay}s (attempt $attempt/$MaxRetries)..." -ForegroundColor DarkGray
+                Start-Sleep -Seconds $delay
+                $delay = [Math]::Min($delay * 2, 10)  # Exponential backoff, cap at 10s
+                continue
+            }
+            throw
+        }
+    }
+}
+
+function Ensure-RoleAssignment {
+    param(
+        [string]$RoleName,
+        [string]$AssigneeObjectId,
+        [string]$AssigneePrincipalType,
+        [string]$Scope
+    )
+
+    if ([string]::IsNullOrWhiteSpace($AssigneeObjectId)) { return }
+
+    $existing = Invoke-AzJson @(
+        "role", "assignment", "list",
+        "--assignee-object-id", $AssigneeObjectId,
+        "--scope", $Scope,
+        "--role", $RoleName,
+        "--query", "[0].id"
+    )
+
+    if ($existing) {
+        Write-Host "    Role already assigned: $RoleName" -ForegroundColor DarkGray
+        return
+    }
+
+    try {
+        Invoke-Az @(
+            "role", "assignment", "create",
+            "--role", $RoleName,
+            "--assignee-object-id", $AssigneeObjectId,
+            "--assignee-principal-type", $AssigneePrincipalType,
+            "--scope", $Scope
+        ) | Out-Null
+        Write-Success "Role assigned: $RoleName"
+    }
+    catch {
+        $msg = $_.Exception.Message
+        if ($msg -match "RoleAssignmentExists|already exists") {
+            Write-Host "    Role already assigned: $RoleName" -ForegroundColor DarkGray
+        }
+        else {
+            throw
+        }
+    }
+}
+
+function Set-WorkshopRbac {
+    param(
+        [string]$SubId,
+        [string]$ResourceGroup,
+        [string]$ProjectManagedIdentityPrincipalId = ""
+    )
+
+    Write-Step "Assigning Azure RBAC roles (optional)..."
+    $include = Read-Host "  Configure RBAC role assignments now? (y/n)"
+    if ($include -notmatch "^[Yy]$") {
+        Write-Warn "Skipping RBAC role assignment"
+        return
+    }
+
+    $scope = "/subscriptions/$SubId/resourceGroups/$ResourceGroup"
+    Write-Host "  Scope: $scope" -ForegroundColor Cyan
+
+    $groupObjectId = Read-Host "  Enter Entra group object ID for shared permissions (Enter to skip)"
+    if (-not [string]::IsNullOrWhiteSpace($groupObjectId)) {
+        Write-Host "  Group role bundles:" -ForegroundColor Cyan
+        Write-Host "  1. Core only (Azure AI Developer, Cognitive Services OpenAI User)"
+        Write-Host "  2. Search only (Search Index Data Contributor, Search Index Data Reader, Search Service Contributor)"
+        Write-Host "  3. Core + Search"
+        Write-Host "  4. All workshop roles"
+        $bundle = Read-Host "  Select group role bundle (Enter for 3)"
+        if ([string]::IsNullOrWhiteSpace($bundle)) { $bundle = "3" }
+
+        $groupRoles = switch ($bundle) {
+            "1" { @("Azure AI Developer", "Cognitive Services OpenAI User") }
+            "2" { @("Search Index Data Contributor", "Search Index Data Reader", "Search Service Contributor") }
+            "4" { @("Azure AI Developer", "Cognitive Services OpenAI User", "Storage Blob Data Contributor", "Search Index Data Contributor", "Search Index Data Reader", "Search Service Contributor") }
+            default { @("Azure AI Developer", "Cognitive Services OpenAI User", "Search Index Data Contributor", "Search Index Data Reader", "Search Service Contributor") }
+        }
+
+        Write-Host "  Assigning group roles..." -ForegroundColor DarkGray
+        foreach ($role in $groupRoles) {
+            Ensure-RoleAssignment -RoleName $role -AssigneeObjectId $groupObjectId -AssigneePrincipalType "Group" -Scope $scope
+        }
+    }
+
+    if (-not [string]::IsNullOrWhiteSpace($ProjectManagedIdentityPrincipalId)) {
+        $assignMi = Read-Host "  Assign 'Search Index Data Reader' to project managed identity (recommended, notebook 8)? (y/n)"
+        if ($assignMi -match "^[Yy]$") {
+            Ensure-RoleAssignment -RoleName "Search Index Data Reader" -AssigneeObjectId $ProjectManagedIdentityPrincipalId -AssigneePrincipalType "ServicePrincipal" -Scope $scope
+        }
+    }
+
+    Write-Success "RBAC configuration step complete"
+}
+
 # ---------------------------------------------------------------------------
 # Wait for a CognitiveServices resource to finish provisioning
 # ---------------------------------------------------------------------------
 function Wait-Provisioning {
     param([string]$ResourceGroup, [string]$AccountName, [string]$SubId, [string]$ProjectName = "")
 
-    $url = if ($ProjectName) {
-        "https://management.azure.com/subscriptions/$SubId/resourceGroups/$ResourceGroup/providers/Microsoft.CognitiveServices/accounts/$AccountName/projects/$ProjectName`?api-version=2025-04-01-preview"
-    } else {
-        $null
-    }
-
     for ($i = 0; $i -lt 30; $i++) {
-        if ($url) {
-            $state = (Invoke-AzJson @("rest", "--method", "GET", "--url", $url)).properties.provisioningState
-        } else {
-            $state = (Invoke-AzJson @("cognitiveservices", "account", "show",
-                "--name", $AccountName, "--resource-group", $ResourceGroup)).properties.provisioningState
+        if ($ProjectName) {
+            $url = "https://management.azure.com/subscriptions/$SubId/resourceGroups/$ResourceGroup/providers/Microsoft.CognitiveServices/accounts/$AccountName/projects/$ProjectName"
+            try {
+                $state = (Invoke-AzRestJsonObject -Method "GET" -Url $url -ApiVersion "2025-04-01-preview").properties.provisioningState
+            }
+            catch {
+                $errorMsg = $_.Exception.Message
+                if ($errorMsg -match "ResourceNotFound|ParentResourceNotFound") {
+                    $state = "Accepted"
+                }
+                else {
+                    throw
+                }
+            }
+        }
+        else {
+            $url = "https://management.azure.com/subscriptions/$SubId/resourceGroups/$ResourceGroup/providers/Microsoft.CognitiveServices/accounts/$AccountName"
+            try {
+                $state = (Invoke-AzRestJsonObject -Method "GET" -Url $url -ApiVersion "2025-12-01").properties.provisioningState
+            }
+            catch {
+                $errorMsg = $_.Exception.Message
+                if ($errorMsg -match "ResourceNotFound|ParentResourceNotFound") {
+                    $state = "Accepted"
+                }
+                else {
+                    throw
+                }
+            }
         }
         if ($state -eq "Succeeded") { return }
-        if ($state -eq "Failed")    { throw "Provisioning failed" }
+        if ($state -eq "Failed") { throw "Provisioning failed" }
         Write-Host "    ... $state, waiting 10s" -ForegroundColor DarkGray
         Start-Sleep 10
     }
@@ -99,12 +285,11 @@ function New-WorkshopResourceGroup {
 
     Write-Step "Creating resource group..."
 
-    $name = Read-Host "  Enter resource group name (e.g. rg-ai-workshop)"
+    $name = "poc-aim-wtw-workshop"  # "Enter resource group name (e.g. rg-ai-workshop)"
 
-    # Region is fixed to North Central US — required for hosted-agents (preview feature).
+    # Region is fixed to East US 2 — required for hosted-agents (preview feature).
     # All other workshop notebooks also work in this region.
-    $location = "northcentralus"
-    Write-Host "  Region: North Central US (northcentralus) — required for hosted-agents support" -ForegroundColor Cyan
+    $location = "eastus2"
 
     Invoke-Az @("group", "create",
         "--name", $name,
@@ -123,39 +308,67 @@ function New-AIServicesAccount {
 
     Write-Step "Creating Azure AI Services account..."
 
-    $default = "$ResourceGroup-aiservices"
+    $default = "$ResourceGroup-aim-ai-services"
     $name = Read-Host "  Account name (Enter for '$default')"
     if ([string]::IsNullOrWhiteSpace($name)) { $name = $default }
 
     # Custom subdomain is required before projects can be created under the account.
     # It must be globally unique — default to the account name itself.
     $customDomain = $name
+    # Some tenants/policies now require explicit public network access setting at create time.
+    $publicNetworkAccess = "Enabled"
 
-    # --assign-identity is a boolean flag that takes no argument value.
-    Invoke-Az @(
-        "cognitiveservices", "account", "create",
-        "--name",             $name,
-        "--resource-group",   $ResourceGroup,
-        "--kind",             "AIServices",
-        "--sku",              "S0",
-        "--location",         $Location,
-        "--subscription",     $SubId,
-        "--custom-domain",    $customDomain,
-        "--assign-identity",
-        "--yes"
-    ) | Out-Null
+    # Use ARM REST for create to avoid Azure CLI version differences on flags
+    # (for example, --public-network-access may be unavailable in older az versions).
+    # allowProjectManagement must be true to create Foundry projects under this account.
+    $accountApiVersion = "2025-12-01"
+    $accountUrl = "https://management.azure.com/subscriptions/$SubId/resourceGroups/$ResourceGroup/providers/Microsoft.CognitiveServices/accounts/$name"
+    $accountBody = "{`"kind`":`"AIServices`",`"location`":`"$Location`",`"sku`":{`"name`":`"S0`"},`"identity`":{`"type`":`"SystemAssigned`"},`"tags`":{`"gr401`":`"UC1`"},`"properties`":{`"customSubDomainName`":`"$customDomain`",`"publicNetworkAccess`":`"$publicNetworkAccess`",`"allowProjectManagement`":true}}"
+
+    $existingAccount = $null
+    try {
+        $existingAccount = Invoke-AzRestJsonObject -Method "GET" -Url $accountUrl -ApiVersion $accountApiVersion -Silent
+    }
+    catch {
+        $errorMsg = $_.Exception.Message
+        if ($errorMsg -notmatch "ResourceNotFound|ParentResourceNotFound") {
+            throw
+        }
+    }
+
+    if ($existingAccount) {
+        Write-Warn "AIServices account '$name' already exists — reusing and applying required settings"
+        $patchBody = "{`"properties`":{`"publicNetworkAccess`":`"$publicNetworkAccess`",`"allowProjectManagement`":true},`"tags`":{`"gr401`":`"UC1`"}}"
+        try {
+            Invoke-AzRestWithRetry -Method "PATCH" -Url $accountUrl -Body $patchBody -ApiVersion $accountApiVersion -MaxRetries 6 -InitialDelaySeconds 3 | Out-Null
+        }
+        catch {
+            Write-Warn "Could not patch account settings automatically; continuing with existing account"
+        }
+    }
+    else {
+        try {
+            Invoke-AzRestWithRetry -Method "PUT" -Url $accountUrl -Body $accountBody -ApiVersion $accountApiVersion -MaxRetries 8 -InitialDelaySeconds 5 | Out-Null
+        }
+        catch {
+            if ($_.Exception.Message -match "FlagMustBeSetForRestore") {
+                Write-Warn "Soft-deleted account found — purging before recreating..."
+                Invoke-Az @("cognitiveservices", "account", "purge",
+                    "--location", $Location, "--resource-group", $ResourceGroup,
+                    "--name", $name, "--subscription", $SubId) | Out-Null
+                Write-Success "Purged soft-deleted account — retrying creation..."
+                Invoke-AzRestWithRetry -Method "PUT" -Url $accountUrl -Body $accountBody -ApiVersion $accountApiVersion -MaxRetries 8 -InitialDelaySeconds 5 | Out-Null
+            }
+            else { throw }
+        }
+    }
 
     Write-Host "    waiting for provisioning..." -ForegroundColor DarkGray
     Wait-Provisioning -ResourceGroup $ResourceGroup -AccountName $name -SubId $SubId
 
-    $resource = Invoke-AzJson @(
-        "cognitiveservices", "account", "show",
-        "--name",           $name,
-        "--resource-group", $ResourceGroup,
-        "--subscription",   $SubId
-    )
+    $resource = (Invoke-AzRestWithRetry -Method "GET" -Url "https://management.azure.com/subscriptions/$SubId/resourceGroups/$ResourceGroup/providers/Microsoft.CognitiveServices/accounts/$name" -ApiVersion "2025-12-01" -MaxRetries 5 -InitialDelaySeconds 2) | ConvertFrom-Json
 
-    $openaiEndpoint  = $resource.properties.endpoints."OpenAI Language Model Instance API"
+    $openaiEndpoint = $resource.properties.endpoints."OpenAI Language Model Instance API"
     $foundryEndpoint = $resource.properties.endpoints."AI Foundry API"
 
     Write-Success "AIServices account '$name' ready"
@@ -175,39 +388,39 @@ function New-AIServicesAccount {
 # ---------------------------------------------------------------------------
 function New-FoundryProject {
     param([string]$ResourceGroup, [string]$Location, [string]$SubId,
-          [string]$AccountName, [string]$AccountId)
+        [string]$AccountName, [string]$AccountId)
 
     Write-Step "Creating AI Foundry project..."
 
-    $default = "ai-workshop"
+    $default = "aim-ai-workshop"
     $projectName = Read-Host "  Project name (Enter for '$default')"
     if ([string]::IsNullOrWhiteSpace($projectName)) { $projectName = $default }
 
-    $url  = "https://management.azure.com$AccountId/projects/$projectName`?api-version=2025-04-01-preview"
+    $projectApiVersion = "2025-04-01-preview"
+    $url = "https://management.azure.com$AccountId/projects/$projectName"
     # The identity block is required — without it the ARM API returns 400 "must enable a managed identity".
     $body = "{`"location`":`"$Location`",`"kind`":`"AIServices`",`"identity`":{`"type`":`"SystemAssigned`"},`"properties`":{}}"
 
-    Invoke-Az @("rest", "--method", "PUT", "--url", $url, "--body", $body) | Out-Null
+    Invoke-AzRestJson -Method "PUT" -Url $url -Body $body -ApiVersion $projectApiVersion | Out-Null
 
     Write-Host "    waiting for provisioning..." -ForegroundColor DarkGray
     Wait-Provisioning -ResourceGroup $ResourceGroup -AccountName $AccountName `
         -SubId $SubId -ProjectName $projectName
 
-    $project = Invoke-AzJson @(
-        "rest", "--method", "GET", "--url",
-        "https://management.azure.com$AccountId/projects/$projectName`?api-version=2025-04-01-preview"
-    )
+    $project = Invoke-AzRestJsonObject -Method "GET" -Url "https://management.azure.com$AccountId/projects/$projectName" -ApiVersion $projectApiVersion
 
-    $endpoint   = $project.properties.endpoints."AI Foundry API"
+    $endpoint = $project.properties.endpoints."AI Foundry API"
     $resourceId = $project.id
+    $projectMiPrincipalId = $project.identity.principalId
 
     Write-Success "Project '$projectName' ready"
     Write-Success "Project endpoint: $endpoint"
 
     return @{
-        Name       = $projectName
-        Endpoint   = $endpoint
-        ResourceId = $resourceId
+        Name                       = $projectName
+        Endpoint                   = $endpoint
+        ResourceId                 = $resourceId
+        ManagedIdentityPrincipalId = $projectMiPrincipalId
     }
 }
 
@@ -219,62 +432,97 @@ function New-ModelDeployments {
 
     Write-Step "Deploying models..."
 
-    # List available models and let user pick chat model
+    $location = (Invoke-AzJson @("group", "show",
+            "--name", $ResourceGroup, "--query", "location")).Trim('"')
+
+    # List available models and let user pick chat model(s)
     Write-Host "  Fetching available chat models..." -ForegroundColor DarkGray
     # unique_by() is not supported in az CLI's JMESPath — deduplicate on the PowerShell side instead.
-    $chatModelsRaw = Invoke-AzJson @(
+    $allChatModelsRaw = Invoke-AzJson @(
         "cognitiveservices", "model", "list",
-        "--location", (Invoke-AzJson @("group", "show",
-            "--name", $ResourceGroup, "--query", "location")).Trim('"'),
-        "--query", "[?model.capabilities.chatCompletion=='true' && model.lifecycleStatus!='Deprecated'].{name:model.name, version:model.version} | sort_by(@, &name)"
+        "--location", $location,
+        "--query", "[?model.capabilities.chatCompletion=='true' && model.lifecycleStatus!='Deprecated' && model.lifecycleStatus!='Deprecating'].{name:model.name, version:model.version} | sort_by(@, &name)"
     )
-    $chatModels = $chatModelsRaw | Sort-Object name | Group-Object name | ForEach-Object { $_.Group[0] }
+    $allChatModels = $allChatModelsRaw | Sort-Object name | Group-Object name | ForEach-Object { $_.Group[0] }
+    $gptChatModels  = @($allChatModels | Where-Object { $_.name -match '^gpt' })
 
-    Write-Host "`n  Available chat models:"
-    for ($i = 0; $i -lt [Math]::Min($chatModels.Count, 20); $i++) {
-        Write-Host "  $($i+1). $($chatModels[$i].name)"
+    $chatModels = $gptChatModels
+    $showingAll = $false
+
+    function Show-ChatModelList {
+        param([array]$Models, [bool]$All)
+        $label = if ($All) { "All available chat models" } else { "GPT chat models (enter * to see all)" }
+        Write-Host "`n  $label`:" -ForegroundColor Cyan
+        for ($i = 0; $i -lt $Models.Count; $i++) {
+            Write-Host "  $($i+1). $($Models[$i].name)"
+        }
     }
-    $chatSel      = [int](Read-Host "  Select chat model number") - 1
-    $chatModel    = $chatModels[$chatSel].name
 
-    # Get versions for selected model
-    # unique_by() is not supported in az CLI's JMESPath — deduplicate on the PowerShell side.
-    # format is captured so it can be passed to --model-format at deployment time.
-    $chatVersionsRaw = Invoke-AzJson @(
-        "cognitiveservices", "model", "list",
-        "--location", (Invoke-AzJson @("group", "show",
-            "--name", $ResourceGroup, "--query", "location")).Trim('"'),
-        "--query", "[?model.name=='$chatModel' && model.lifecycleStatus!='Deprecated'].{version:model.version, sku:model.skus[0].name, format:model.format}"
-    )
-    $chatVersions = $chatVersionsRaw | Group-Object version | ForEach-Object { $_.Group[0] }
+    Show-ChatModelList -Models $chatModels -All $showingAll
 
-    Write-Host "`n  Available versions for $chatModel`:"
-    for ($i = 0; $i -lt $chatVersions.Count; $i++) {
-        Write-Host "  $($i+1). $($chatVersions[$i].version)  [SKU: $($chatVersions[$i].sku)]"
+    $chatIndexes = $null
+    while ($null -eq $chatIndexes) {
+        $chatSelectionRaw = Read-Host "  Select model number(s) (comma-separated), or * for full list"
+        if ($chatSelectionRaw.Trim() -eq "*") {
+            $chatModels = $allChatModels
+            $showingAll = $true
+            Show-ChatModelList -Models $chatModels -All $showingAll
+            continue
+        }
+        $parsed = @($chatSelectionRaw -split "," | ForEach-Object { $_.Trim() } | Where-Object { $_ -match '^\d+$' } | ForEach-Object { [int]$_ - 1 } | Where-Object { $_ -ge 0 -and $_ -lt $chatModels.Count } | Select-Object -Unique)
+        if ($parsed.Count -eq 0) {
+            Write-Warn "Invalid selection — enter one or more numbers from the list, or * to see all models"
+            continue
+        }
+        $chatIndexes = $parsed
     }
-    $verSel      = [int](Read-Host "  Select version number") - 1
-    $chatVersion = $chatVersions[$verSel].version
-    $chatSku     = $chatVersions[$verSel].sku
-    $chatFormat  = $chatVersions[$verSel].format
 
-    # Deployment name
-    $chatDepDefault = $chatModel
-    $chatDepName    = Read-Host "  Chat deployment name (Enter for '$chatDepDefault')"
-    if ([string]::IsNullOrWhiteSpace($chatDepName)) { $chatDepName = $chatDepDefault }
+    $chatDeploymentNames = @()
+    foreach ($chatSel in $chatIndexes) {
+        $chatModel = $chatModels[$chatSel].name
 
-    Write-Host "  Deploying $chatModel ($chatVersion)..." -ForegroundColor DarkGray
-    Invoke-Az @(
-        "cognitiveservices", "account", "deployment", "create",
-        "--resource-group", $ResourceGroup,
-        "--name",           $AccountName,
-        "--deployment-name",$chatDepName,
-        "--model-name",     $chatModel,
-        "--model-version",  $chatVersion,
-        "--model-format",   $chatFormat,
-        "--sku-capacity",   "50",
-        "--sku-name",       $chatSku
-    ) | Out-Null
-    Write-Success "Chat model deployed: $chatDepName"
+        # Get versions for selected model
+        # unique_by() is not supported in az CLI's JMESPath — deduplicate on the PowerShell side.
+        # format is captured so it can be passed to --model-format at deployment time.
+        $chatVersionsRaw = Invoke-AzJson @(
+            "cognitiveservices", "model", "list",
+            "--location", $location,
+            "--query", "[?model.name=='$chatModel' && model.lifecycleStatus!='Deprecated' && model.lifecycleStatus!='Deprecating'].{version:model.version, sku:model.skus[0].name, format:model.format}"
+        )
+        $chatVersions = $chatVersionsRaw | Group-Object version | ForEach-Object { $_.Group[0] } | Sort-Object version -Descending
+
+        Write-Host "`n  Available versions for $chatModel`:"
+        for ($i = 0; $i -lt $chatVersions.Count; $i++) {
+            Write-Host "  $($i+1). $($chatVersions[$i].version)  [SKU: $($chatVersions[$i].sku)]"
+        }
+        $verSelection = Read-Host "  Select version number for $chatModel (Enter for 1)"
+        if ([string]::IsNullOrWhiteSpace($verSelection)) { $verSelection = "1" }
+        $verSel = [int]$verSelection - 1
+
+        $chatVersion = $chatVersions[$verSel].version
+        $chatSku = $chatVersions[$verSel].sku
+        $chatFormat = $chatVersions[$verSel].format
+
+        # Deployment name
+        $chatDepDefault = $chatModel
+        $chatDepName = Read-Host "  Deployment name for $chatModel (Enter for '$chatDepDefault')"
+        if ([string]::IsNullOrWhiteSpace($chatDepName)) { $chatDepName = $chatDepDefault }
+
+        Write-Host "  Deploying $chatModel ($chatVersion)..." -ForegroundColor DarkGray
+        Invoke-Az @(
+            "cognitiveservices", "account", "deployment", "create",
+            "--resource-group", $ResourceGroup,
+            "--name", $AccountName,
+            "--deployment-name", $chatDepName,
+            "--model-name", $chatModel,
+            "--model-version", $chatVersion,
+            "--model-format", $chatFormat,
+            "--sku-capacity", "50",
+            "--sku-name", $chatSku
+        ) | Out-Null
+        Write-Success "Chat model deployed: $chatDepName"
+        $chatDeploymentNames += $chatDepName
+    }
 
     # Embedding model
     $embedDefault = "text-embedding-3-large"
@@ -284,8 +532,8 @@ function New-ModelDeployments {
     $embedModelsRaw = Invoke-AzJson @(
         "cognitiveservices", "model", "list",
         "--location", (Invoke-AzJson @("group", "show",
-            "--name", $ResourceGroup, "--query", "location")).Trim('"'),
-        "--query", "[?model.capabilities.embeddings=='true' && model.lifecycleStatus!='Deprecated'].{name:model.name, version:model.version, format:model.format, sku:model.skus[0].name}"
+                "--name", $ResourceGroup, "--query", "location")).Trim('"'),
+        "--query", "[?model.capabilities.embeddings=='true' && model.lifecycleStatus!='Deprecated' && model.lifecycleStatus!='Deprecating'].{name:model.name, version:model.version, format:model.format, sku:model.skus[0].name}"
     )
     $embedModels = $embedModelsRaw | Group-Object name | ForEach-Object { $_.Group[0] }
 
@@ -293,29 +541,42 @@ function New-ModelDeployments {
     for ($i = 0; $i -lt $embedModels.Count; $i++) {
         Write-Host "  $($i+1). $($embedModels[$i].name)"
     }
-    $embedSel     = [int](Read-Host "  Select embedding model number") - 1
-    $embedModel   = $embedModels[$embedSel].name
-    $embedVersion = $embedModels[$embedSel].version
-    $embedFormat  = $embedModels[$embedSel].format
-    $embedSku     = $embedModels[$embedSel].sku
-    $embedDepName = $embedModel
+    $embedSelectionRaw = Read-Host "  Select embedding model number(s) (comma-separated, e.g. 1,2)"
+    if ([string]::IsNullOrWhiteSpace($embedSelectionRaw)) { $embedSelectionRaw = "1" }
+    $embedIndexes = @($embedSelectionRaw -split "," | ForEach-Object { $_.Trim() } | Where-Object { $_ -match '^\d+$' } | ForEach-Object { [int]$_ - 1 } | Where-Object { $_ -ge 0 -and $_ -lt $embedModels.Count } | Select-Object -Unique)
+    if ($embedIndexes.Count -eq 0) { throw "No valid embedding model selections were provided" }
 
-    Invoke-Az @(
-        "cognitiveservices", "account", "deployment", "create",
-        "--resource-group", $ResourceGroup,
-        "--name",           $AccountName,
-        "--deployment-name",$embedDepName,
-        "--model-name",     $embedModel,
-        "--model-version",  $embedVersion,
-        "--model-format",   $embedFormat,
-        "--sku-capacity",   "50",
-        "--sku-name",       $embedSku
-    ) | Out-Null
-    Write-Success "Embedding model deployed: $embedDepName"
+    $embedDeploymentNames = @()
+    foreach ($embedSel in $embedIndexes) {
+        $embedModel = $embedModels[$embedSel].name
+        $embedVersion = $embedModels[$embedSel].version
+        $embedFormat = $embedModels[$embedSel].format
+        $embedSku = $embedModels[$embedSel].sku
+
+        $embedDepDefault = $embedModel
+        $embedDepName = Read-Host "  Deployment name for $embedModel (Enter for '$embedDepDefault')"
+        if ([string]::IsNullOrWhiteSpace($embedDepName)) { $embedDepName = $embedDepDefault }
+
+        Invoke-Az @(
+            "cognitiveservices", "account", "deployment", "create",
+            "--resource-group", $ResourceGroup,
+            "--name", $AccountName,
+            "--deployment-name", $embedDepName,
+            "--model-name", $embedModel,
+            "--model-version", $embedVersion,
+            "--model-format", $embedFormat,
+            "--sku-capacity", "50",
+            "--sku-name", $embedSku
+        ) | Out-Null
+        Write-Success "Embedding model deployed: $embedDepName"
+        $embedDeploymentNames += $embedDepName
+    }
 
     return @{
-        ChatDeploymentName      = $chatDepName
-        EmbeddingDeploymentName = $embedDepName
+        ChatDeploymentName       = $chatDeploymentNames[0]
+        EmbeddingDeploymentName  = $embedDeploymentNames[0]
+        ChatDeploymentNames      = ($chatDeploymentNames -join ",")
+        EmbeddingDeploymentNames = ($embedDeploymentNames -join ",")
     }
 }
 
@@ -330,51 +591,75 @@ function New-SearchService {
     if ($include -notmatch "^[Yy]$") {
         Write-Warn "Skipping Azure AI Search"
         return @{
-            Endpoint            = "<your-search-endpoint>"
-            ApiKey              = "<your-search-api-key>"
-            ApiVersion          = "2025-03-01-preview"
-            AuthMethod          = "api-search-key"
-            IndexName           = "<your-index-name>"
+            Endpoint   = "<your-search-endpoint>"
+            ApiKey     = "<your-search-api-key>"
+            ApiVersion = "2025-03-01-preview"
+            AuthMethod = "api-search-key"
+            IndexName  = "<your-index-name>"
         }
     }
 
     $skus = @("free", "basic", "standard", "standard2", "standard3")
     Write-Host "`n  Available SKUs:"
     for ($i = 0; $i -lt $skus.Count; $i++) { Write-Host "  $($i+1). $($skus[$i])" }
-    $skuSel  = [int](Read-Host "  Select SKU (recommend 'standard' for workshop)") - 1
-    $sku     = $skus[$skuSel]
+    $skuSel = [int](Read-Host "  Select SKU (recommend 'standard' for workshop)") - 1
+    $sku = $skus[$skuSel]
 
-    $default = "$ResourceGroup-search"
-    $name    = Read-Host "  Search service name (Enter for '$default')"
+    $suffix = -join ((97..122) | Get-Random -Count 4 | ForEach-Object { [char]$_ })
+    $default = "$ResourceGroup-search-$suffix"
+    $name = Read-Host "  Search service name (Enter for '$default')"
     if ([string]::IsNullOrWhiteSpace($name)) { $name = $default }
 
-    Invoke-Az @(
-        "search", "service", "create",
-        "--name",           $name,
-        "--resource-group", $ResourceGroup,
-        "--location",       $Location,
-        "--sku",            $sku,
-        "--subscription",   $SubId
-    ) | Out-Null
+    $searchLocation = $Location
+    while ($true) {
+        try {
+            Invoke-Az @(
+                "search", "service", "create",
+                "--name", $name,
+                "--resource-group", $ResourceGroup,
+                "--location", $searchLocation,
+                "--sku", $sku,
+                "--subscription", $SubId
+            ) | Out-Null
+            break
+        }
+        catch {
+            if ($_.Exception.Message -match "InsufficientResourcesAvailable") {
+                Write-Warn "Region '$searchLocation' is out of AI Search capacity."
+                $altRegion = Read-Host "  Enter an alternate region (Enter for 'centralus')"
+                if ([string]::IsNullOrWhiteSpace($altRegion)) { $altRegion = "centralus" }
+                $searchLocation = $altRegion
+            }
+            elseif ($_.Exception.Message -match "already exists") {
+                Write-Warn "Name '$name' is already taken globally."
+                $newSuffix = -join ((97..122) | Get-Random -Count 4 | ForEach-Object { [char]$_ })
+                $suggested = "$ResourceGroup-search-$newSuffix"
+                $name = Read-Host "  Enter a different name (Enter for '$suggested')"
+                if ([string]::IsNullOrWhiteSpace($name)) { $name = $suggested }
+            }
+            else { throw }
+        }
+    }
 
     $endpoint = "https://$name.search.windows.net"
-    $key      = (Invoke-AzJson @(
-        "search", "admin-key", "show",
-        "--resource-group",   $ResourceGroup,
-        "--service-name",     $name,
-        "--subscription",     $SubId
-    )).primaryKey
+    $key = (Invoke-AzJson @(
+            "search", "admin-key", "show",
+            "--resource-group", $ResourceGroup,
+            "--service-name", $name,
+            "--subscription", $SubId
+        )).primaryKey
 
     $indexName = Read-Host "  Index name to use (Enter for 'workshop-index')"
     if ([string]::IsNullOrWhiteSpace($indexName)) { $indexName = "workshop-index" }
 
     # Register search as a connection in the Foundry project
-    $connUrl  = "https://management.azure.com$ProjectResourceId/connections/$name`?api-version=2025-04-01-preview"
+    $connUrl = "https://management.azure.com$ProjectResourceId/connections/$name"
     $connBody = "{`"properties`":{`"category`":`"CognitiveSearch`",`"target`":`"$endpoint`",`"authType`":`"ApiKey`",`"credentials`":{`"key`":`"$key`"}}}"
     try {
-        Invoke-Az @("rest", "--method", "PUT", "--url", $connUrl, "--body", $connBody) | Out-Null
+        Invoke-AzRestWithRetry -Method "PUT" -Url $connUrl -Body $connBody -ApiVersion "2025-04-01-preview" | Out-Null
         Write-Success "Search connection registered in Foundry project"
-    } catch {
+    }
+    catch {
         Write-Warn "Could not register search connection in project (can be added manually)"
     }
 
@@ -405,27 +690,24 @@ function New-BingConnection {
     }
 
     $default = "$ResourceGroup-bing"
-    $name    = Read-Host "  Bing resource name (Enter for '$default')"
+    $name = Read-Host "  Bing resource name (Enter for '$default')"
     if ([string]::IsNullOrWhiteSpace($name)) { $name = $default }
 
     # Create the Bing Grounding resource via Microsoft.Bing/accounts.
     # NOTE: Bing.Search.v7 (Microsoft.CognitiveServices kind) is deprecated and no longer valid.
     # The replacement is Microsoft.Bing/accounts with kind=Bing.Grounding and SKU=G1.
-    $bingUrl  = "https://management.azure.com/subscriptions/$SubId/resourceGroups/$ResourceGroup/providers/Microsoft.Bing/accounts/$name`?api-version=2025-05-01-preview"
+    $bingUrl = "https://management.azure.com/subscriptions/$SubId/resourceGroups/$ResourceGroup/providers/Microsoft.Bing/accounts/$name"
     $bingBody = "{`"location`":`"global`",`"kind`":`"Bing.Grounding`",`"sku`":{`"name`":`"G1`"},`"properties`":{}}"
-    Invoke-Az @("rest", "--method", "PUT", "--url", $bingUrl, "--body", $bingBody) | Out-Null
+    Invoke-AzRestJson -Method "PUT" -Url $bingUrl -Body $bingBody -ApiVersion "2025-05-01-preview" | Out-Null
 
-    $bingKey = (Invoke-AzJson @(
-        "rest", "--method", "POST", "--url",
-        "https://management.azure.com/subscriptions/$SubId/resourceGroups/$ResourceGroup/providers/Microsoft.Bing/accounts/$name/listKeys`?api-version=2025-05-01-preview"
-    )).key1
+    $bingKey = (Invoke-AzRestJsonObject -Method "POST" -Url "https://management.azure.com/subscriptions/$SubId/resourceGroups/$ResourceGroup/providers/Microsoft.Bing/accounts/$name/listKeys" -ApiVersion "2025-05-01-preview").key1
 
     # Register as connection in the Foundry project
     $connName = "bing-$name"
-    $connUrl  = "https://management.azure.com$ProjectResourceId/connections/$connName`?api-version=2025-04-01-preview"
+    $connUrl = "https://management.azure.com$ProjectResourceId/connections/$connName"
     $connBody = "{`"properties`":{`"category`":`"GroundingWithBingSearch`",`"target`":`"https://api.bing.microsoft.com`",`"authType`":`"ApiKey`",`"credentials`":{`"key`":`"$bingKey`"}}}"
 
-    $conn = Invoke-AzJson @("rest", "--method", "PUT", "--url", $connUrl, "--body", $connBody)
+    $conn = (Invoke-AzRestWithRetry -Method "PUT" -Url $connUrl -Body $connBody -ApiVersion "2025-04-01-preview") | ConvertFrom-Json
     $connId = $conn.id
 
     Write-Success "Bing connection '$connName' created"
@@ -473,7 +755,9 @@ PROJECT_RESOURCE_ID=$($Project.ResourceId)
 # MODEL DEPLOYMENTS
 # =============================================================================
 AZURE_AI_MODEL_DEPLOYMENT_NAME=$($Models.ChatDeploymentName)
+AZURE_AI_MODEL_DEPLOYMENT_NAMES=$($Models.ChatDeploymentNames)
 EMBEDDING_MODEL_DEPLOYMENT_NAME=$($Models.EmbeddingDeploymentName)
+EMBEDDING_MODEL_DEPLOYMENT_NAMES=$($Models.EmbeddingDeploymentNames)
 
 # =============================================================================
 # AZURE OPENAI DIRECT ACCESS
@@ -531,33 +815,37 @@ function Main {
     Write-Host "╚════════════════════════════════════════════════════════════════╝" -ForegroundColor Cyan
     Write-Host ""
 
-    $account    = Get-SubscriptionInfo
-    $tenantId   = $account.tenantId
-    $subId      = $account.id
+    $account = Get-SubscriptionInfo
+    $tenantId = $account.tenantId
+    $subId = $account.id
 
-    $rg         = New-WorkshopResourceGroup -SubId $subId
+    $rg = New-WorkshopResourceGroup -SubId $subId
 
-    $aiAccount  = New-AIServicesAccount -ResourceGroup $rg.Name -Location $rg.Location -SubId $subId
+    $aiAccount = New-AIServicesAccount -ResourceGroup $rg.Name -Location $rg.Location -SubId $subId
 
-    $apiKey     = (Invoke-AzJson @(
-        "cognitiveservices", "account", "keys", "list",
-        "--name",           $aiAccount.Name,
-        "--resource-group", $rg.Name
-    )).key1
+    $apiKey = (Invoke-AzJson @(
+            "cognitiveservices", "account", "keys", "list",
+            "--name", $aiAccount.Name,
+            "--resource-group", $rg.Name
+        )).key1
 
-    $project    = New-FoundryProject `
+    $project = New-FoundryProject `
         -ResourceGroup $rg.Name -Location $rg.Location `
         -SubId $subId -AccountName $aiAccount.Name -AccountId $aiAccount.Id
 
-    $models     = New-ModelDeployments -ResourceGroup $rg.Name -AccountName $aiAccount.Name -SubId $subId
+    $models = New-ModelDeployments -ResourceGroup $rg.Name -AccountName $aiAccount.Name -SubId $subId
 
-    $search     = New-SearchService `
+    $search = New-SearchService `
         -ResourceGroup $rg.Name -Location $rg.Location `
         -SubId $subId -ProjectResourceId $project.ResourceId
 
-    $bing       = New-BingConnection `
+    $bing = New-BingConnection `
         -ResourceGroup $rg.Name -Location $rg.Location `
         -SubId $subId -ProjectResourceId $project.ResourceId
+
+    Set-WorkshopRbac `
+        -SubId $subId -ResourceGroup $rg.Name `
+        -ProjectManagedIdentityPrincipalId $project.ManagedIdentityPrincipalId
 
     Write-EnvFile `
         -TenantId $tenantId -SubId $subId -ResourceGroup $rg.Name `
@@ -573,7 +861,9 @@ function Main {
     Write-Host "  AI Account     : $($aiAccount.Name)" -ForegroundColor Cyan
     Write-Host "  Project        : $($project.Name)" -ForegroundColor Cyan
     Write-Host "  Chat Model     : $($models.ChatDeploymentName)" -ForegroundColor Cyan
+    Write-Host "  Chat Models    : $($models.ChatDeploymentNames)" -ForegroundColor Cyan
     Write-Host "  Embedding Model: $($models.EmbeddingDeploymentName)" -ForegroundColor Cyan
+    Write-Host "  Embedding Models: $($models.EmbeddingDeploymentNames)" -ForegroundColor Cyan
     Write-Host ""
     Write-Host "  .env file has been written. Start with:" -ForegroundColor White
     Write-Host "  jupyter notebook agent-framework/agents/" -ForegroundColor White

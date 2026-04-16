@@ -100,7 +100,7 @@ Write-Success "Resource group '$resourceGroup' deleted"
 Write-Host ""
 $wipeEnv = Read-Host "  Clear .env file? (y/n)"
 if ($wipeEnv -match "^[Yy]$") {
-    Remove-Item $envPath
+    Remove-Item -Force $envPath
     Write-Success ".env removed"
 } else {
     Write-Warn ".env kept — contains stale values"
