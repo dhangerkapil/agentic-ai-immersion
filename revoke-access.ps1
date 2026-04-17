@@ -3,7 +3,7 @@
 # ============================================================================
 # Revoke workshop participant access to Azure AI Foundry
 #
-# Removes the "Cognitive Services Contributor" role at both the AIServices
+# Removes the "Azure AI Developer" role at both the AIServices
 # account scope and the project scope for each participant.
 #
 # Usage:
@@ -136,7 +136,7 @@ if ($emails.Count -eq 0) {
 }
 
 Write-Host ""
-Write-Host "  Will remove 'Cognitive Services Contributor' from:" -ForegroundColor Cyan
+Write-Host "  Will remove 'Azure AI Developer' from:" -ForegroundColor Cyan
 $emails | ForEach-Object { Write-Host "    - $_" -ForegroundColor Cyan }
 $go = Read-Host "`n  Proceed? (y/n)"
 if ($go -notmatch "^[Yy]$") { Write-Warn "Aborted."; exit 0 }
@@ -170,11 +170,11 @@ foreach ($email in $emails) {
         "role", "assignment", "list",
         "--assignee", $userId,
         "--all"
-    )) | Where-Object { $_.roleDefinitionName -eq "Cognitive Services Contributor" }
+    )) | Where-Object { $_.roleDefinitionName -eq "Azure AI Developer" }
     $assignments = @($assignments)
 
     if ($assignments.Count -eq 0) {
-        Write-Warn "$email has no 'Cognitive Services Contributor' assignments — skipping"
+        Write-Warn "$email has no 'Azure AI Developer' assignments — skipping"
         $succeeded += $email
         continue
     }

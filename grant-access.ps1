@@ -3,7 +3,7 @@
 # ============================================================================
 # Grant workshop participant access to Azure AI Foundry
 #
-# Assigns the "Cognitive Services Contributor" role on the AIServices account so that
+# Assigns the "Azure AI Developer" role on the AIServices account so that
 # participants can create and manage agents, threads, runs, and call model endpoints.
 #
 # Usage:
@@ -136,7 +136,7 @@ if ($emails.Count -eq 0) {
 }
 
 Write-Host ""
-Write-Host "  Will assign 'Cognitive Services Contributor' to:" -ForegroundColor Cyan
+Write-Host "  Will assign 'Azure AI Developer' to:" -ForegroundColor Cyan
 $emails | ForEach-Object { Write-Host "    - $_" -ForegroundColor Cyan }
 $go = Read-Host "`n  Proceed? (y/n)"
 if ($go -notmatch "^[Yy]$") { Write-Warn "Aborted."; exit 0 }
@@ -165,12 +165,12 @@ foreach ($email in $emails) {
         continue
     }
 
-    # Cognitive Services Contributor at both account and project scope covers all data plane
-    # operations (agents, OpenAI inference, embeddings, etc.). The project endpoint enforces
-    # its own RBAC check so the project scope assignment is required in addition to account scope.
+    # Azure AI Developer grants the data plane actions required for agents, OpenAI inference,
+    # and embeddings. The project endpoint enforces its own RBAC check so the project scope
+    # assignment is required in addition to account scope.
     $roleAssignments = @(
-        @{ Role = "Cognitive Services Contributor"; Scope = $accountScope; Label = "account" },
-        @{ Role = "Cognitive Services Contributor"; Scope = $projectScope; Label = "project" }
+        @{ Role = "Azure AI Developer"; Scope = $accountScope; Label = "account" },
+        @{ Role = "Azure AI Developer"; Scope = $projectScope; Label = "project" }
     )
 
     $assignOk = $true
