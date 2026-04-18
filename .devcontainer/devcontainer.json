@@ -37,7 +37,7 @@
         }
     },
     
-    "postCreateCommand": "pip install --upgrade pip && pip install -r requirements.txt && az config set extension.use_dynamic_install=no",
+    "postCreateCommand": "pip install --upgrade pip && pip install -r requirements.txt && pip install azure-mgmt-rdbms && az config set extension.use_dynamic_install=no",
     "postStartCommand": "az config set extension.use_dynamic_install=no",
     
     "containerEnv": {
