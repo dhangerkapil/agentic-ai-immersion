@@ -30,7 +30,7 @@
             }
         }
     },
-    "postAttachCommand": "touch /tmp/.vscode-attached",
+    "postAttachCommand": "bash .devcontainer/on-attach.sh",
     "containerEnv": {
         "PYTHONDONTWRITEBYTECODE": "1",
         "PYTHONUNBUFFERED": "1",

@@ -71,9 +71,3 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     AZURE_EXTENSION_USE_DYNAMIC_INSTALL=no
 
-# ============================================================================
-# Azure login on first terminal open after VS Code is fully attached.
-# postAttachCommand touches /tmp/.vscode-attached; the lock prevents
-# a second terminal from firing a duplicate login.
-# ============================================================================
-RUN printf '\nif [ -t 0 ] && [ -f /tmp/.vscode-attached ] && ! az account show > /dev/null 2>&1; then\n  if mkdir /tmp/.az-login-lock 2>/dev/null; then\n    echo ""\n    echo "🔐 Setting up for Azure..."\n    echo ""\n    az login\n    rmdir /tmp/.az-login-lock 2>/dev/null\n  fi\nfi\n' >> /home/vscode/.bashrc
