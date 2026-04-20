@@ -590,118 +590,6 @@ function New-ModelDeployments {
 }
 
 # ---------------------------------------------------------------------------
-# Search index: create schema and ingest salary-index.json
-# ---------------------------------------------------------------------------
-function Initialize-SearchIndex {
-    param(
-        [string]$Endpoint,
-        [string]$ApiKey,
-        [string]$IndexName,
-        [string]$DataPath
-    )
-
-    $apiVersion = "2024-07-01"
-    $headers = @{ "api-key" = $ApiKey; "Content-Type" = "application/json" }
-
-    $schema = [ordered]@{
-        name   = $IndexName
-        fields = @(
-            [ordered]@{ name="id";                      type="Edm.String";              key=$true;  retrievable=$true;  searchable=$false; filterable=$false; sortable=$false; facetable=$false },
-            [ordered]@{ name="job_title";               type="Edm.String";              key=$false; retrievable=$true;  searchable=$true;  filterable=$false; sortable=$false; facetable=$false; analyzer="en.microsoft" },
-            [ordered]@{ name="job_family";              type="Edm.String";              key=$false; retrievable=$true;  searchable=$true;  filterable=$true;  sortable=$false; facetable=$true  },
-            [ordered]@{ name="title_equivalents";       type="Collection(Edm.String)";  retrievable=$true;  searchable=$true;  filterable=$false },
-            [ordered]@{ name="level";                   type="Edm.String";              key=$false; retrievable=$true;  searchable=$false; filterable=$true;  sortable=$false; facetable=$true  },
-            [ordered]@{ name="years_experience";        type="Edm.Int32";               key=$false; retrievable=$true;  searchable=$false; filterable=$true;  sortable=$true;  facetable=$false },
-            [ordered]@{ name="years_experience_range";  type="Edm.String";              key=$false; retrievable=$true;  searchable=$false; filterable=$false; sortable=$false; facetable=$false },
-            [ordered]@{ name="city";                    type="Edm.String";              key=$false; retrievable=$true;  searchable=$true;  filterable=$true;  sortable=$false; facetable=$true  },
-            [ordered]@{ name="state";                   type="Edm.String";              key=$false; retrievable=$true;  searchable=$false; filterable=$true;  sortable=$false; facetable=$true  },
-            [ordered]@{ name="location";                type="Edm.String";              key=$false; retrievable=$true;  searchable=$true;  filterable=$false; sortable=$false; facetable=$false },
-            [ordered]@{ name="metro_area";              type="Edm.String";              key=$false; retrievable=$true;  searchable=$true;  filterable=$true;  sortable=$false; facetable=$true  },
-            [ordered]@{ name="region";                  type="Edm.String";              key=$false; retrievable=$true;  searchable=$false; filterable=$true;  sortable=$false; facetable=$true  },
-            [ordered]@{ name="cost_of_living_index";    type="Edm.Double";              key=$false; retrievable=$true;  searchable=$false; filterable=$true;  sortable=$true;  facetable=$false },
-            [ordered]@{ name="base_salary_usd";         type="Edm.Int32";               key=$false; retrievable=$true;  searchable=$false; filterable=$true;  sortable=$true;  facetable=$false },
-            [ordered]@{ name="bonus_percent";           type="Edm.Int32";               key=$false; retrievable=$true;  searchable=$false; filterable=$true;  sortable=$true;  facetable=$false },
-            [ordered]@{ name="total_compensation_usd";  type="Edm.Int32";               key=$false; retrievable=$true;  searchable=$false; filterable=$true;  sortable=$true;  facetable=$false },
-            [ordered]@{ name="salary_coli_adjusted_usd"; type="Edm.Int32";             key=$false; retrievable=$true;  searchable=$false; filterable=$true;  sortable=$true;  facetable=$false },
-            [ordered]@{ name="industry";                type="Edm.String";              key=$false; retrievable=$true;  searchable=$true;  filterable=$true;  sortable=$false; facetable=$true  },
-            [ordered]@{ name="skills";                  type="Collection(Edm.String)";  retrievable=$true;  searchable=$true;  filterable=$true  },
-            [ordered]@{ name="education_typical";       type="Edm.String";              key=$false; retrievable=$true;  searchable=$false; filterable=$true;  sortable=$false; facetable=$true  },
-            [ordered]@{ name="remote_eligible";         type="Edm.Boolean";             key=$false; retrievable=$true;  searchable=$false; filterable=$true;  sortable=$false; facetable=$false },
-            [ordered]@{ name="description";             type="Edm.String";              key=$false; retrievable=$true;  searchable=$true;  filterable=$false; sortable=$false; facetable=$false; analyzer="en.microsoft" }
-        )
-        semantic = [ordered]@{
-            configurations = @(
-                [ordered]@{
-                    name = "salary-semantic"
-                    prioritizedFields = [ordered]@{
-                        titleField    = [ordered]@{ fieldName = "job_title" }
-                        contentFields = @([ordered]@{ fieldName = "description" })
-                        keywordsFields = @(
-                            [ordered]@{ fieldName = "skills" },
-                            [ordered]@{ fieldName = "title_equivalents" },
-                            [ordered]@{ fieldName = "job_family" }
-                        )
-                    }
-                }
-            )
-        }
-    }
-
-    $schemaJson = $schema | ConvertTo-Json -Depth 10 -Compress
-
-    Write-Host "  Creating index '$IndexName'..." -ForegroundColor DarkGray
-    $delay = 10
-    for ($attempt = 1; $attempt -le 10; $attempt++) {
-        try {
-            $null = Invoke-RestMethod -Method PUT `
-                -Uri "$Endpoint/indexes/$($IndexName)?api-version=$apiVersion" `
-                -Headers $headers -Body $schemaJson
-            Write-Success "Index '$IndexName' created with semantic configuration"
-            break
-        }
-        catch {
-            $status = $_.Exception.Response.StatusCode.value__
-            if ($attempt -lt 10 -and ($status -in @(503, 502, 0) -or $_.Exception.Message -match "Unable to connect|connection")) {
-                Write-Host "    Search service not ready — waiting ${delay}s (attempt $attempt/10)..." -ForegroundColor DarkGray
-                Start-Sleep $delay
-                $delay = [Math]::Min($delay + 10, 60)
-            }
-            else { throw }
-        }
-    }
-
-    if (-not (Test-Path $DataPath)) {
-        Write-Warn "Data file not found at $DataPath — index created empty"
-        return
-    }
-
-    Write-Host "  Loading $DataPath..." -ForegroundColor DarkGray
-    $docs = Get-Content $DataPath -Raw | ConvertFrom-Json
-
-    $actions = $docs | ForEach-Object {
-        $ht = [ordered]@{ "@search.action" = "upload" }
-        $_.PSObject.Properties | ForEach-Object { $ht[$_.Name] = $_.Value }
-        $ht
-    }
-    $batchJson = (@{ value = $actions } | ConvertTo-Json -Depth 10 -Compress)
-
-    Write-Host "  Uploading $($docs.Count) documents..." -ForegroundColor DarkGray
-    $result = Invoke-RestMethod -Method POST `
-        -Uri "$Endpoint/indexes/$($IndexName)/docs/index?api-version=$apiVersion" `
-        -Headers $headers -Body $batchJson
-
-    $ok   = ($result.value | Where-Object { $_.status -eq $true }).Count
-    $fail = ($result.value | Where-Object { $_.status -ne $true }).Count
-    if ($fail -gt 0) {
-        Write-Warn "$fail document(s) failed:"
-        $result.value | Where-Object { $_.status -ne $true } | ForEach-Object {
-            Write-Warn "  id=$($_.key): $($_.errorMessage)"
-        }
-    }
-    Write-Success "$ok / $($docs.Count) documents indexed into '$IndexName'"
-}
-
-# ---------------------------------------------------------------------------
 # STEP 6 — Azure AI Search (optional)
 # ---------------------------------------------------------------------------
 function New-SearchService {
@@ -770,8 +658,8 @@ function New-SearchService {
             "--subscription", $SubId
         )).primaryKey
 
-    $indexName = Read-Host "  Index name to use (Enter for 'salary-index')"
-    if ([string]::IsNullOrWhiteSpace($indexName)) { $indexName = "salary-index" }
+    $indexName = Read-Host "  Index name to use (Enter for 'workshop-index')"
+    if ([string]::IsNullOrWhiteSpace($indexName)) { $indexName = "workshop-index" }
 
     # Register search as a connection in the Foundry project
     $connUrl = "https://management.azure.com$ProjectResourceId/connections/$name"
@@ -785,14 +673,10 @@ function New-SearchService {
     }
 
     Write-Success "Search service '$name' ready: $endpoint"
-
-    $dataPath = Join-Path $PSScriptRoot "data\salary-index.json"
-    Initialize-SearchIndex -Endpoint $endpoint -ApiKey $key -IndexName $indexName -DataPath $dataPath
-
     return @{
         Endpoint   = $endpoint
         ApiKey     = $key
-        ApiVersion = "2024-07-01"
+        ApiVersion = "2025-03-01-preview"
         AuthMethod = "api-search-key"
         IndexName  = $indexName
     }
