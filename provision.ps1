@@ -770,15 +770,20 @@ function Get-McpConnection {
     Write-Host ""
     Write-Host "  Then follow these steps:" -ForegroundColor White
     Write-Host ""
-    Write-Host "    1. In the left navigation click  'Build'  then  'Tools'" -ForegroundColor White
+    Write-Host "    1. Click  'Build'  in the top navigation menu" -ForegroundColor White
+    Write-Host "       then click the  Tools  icon (screwdriver & wrench) in the left nav" -ForegroundColor White
     Write-Host "    2. Click  [ + Add tool ]  in the toolbar" -ForegroundColor White
     Write-Host "    3. In the panel that opens, click  [ Catalog ]" -ForegroundColor White
     Write-Host "    4. In the search box type:  Foundry MCP Server" -ForegroundColor White
     Write-Host "    5. Select  'Foundry MCP Server (preview)'  from the results" -ForegroundColor White
-    Write-Host "    6. Click  [ Create ]  and wait for the success notification" -ForegroundColor White
-    Write-Host "    7. Click the new connection row to open its detail pane" -ForegroundColor White
-    Write-Host "    8. Copy the  Connection name  shown at the top of the detail pane" -ForegroundColor White
+    Write-Host "    6. An Authentication dialog appears — leave defaults as-is:" -ForegroundColor White
+    Write-Host "         OAuth Provider : Managed  (Microsoft managed OAuth app)" -ForegroundColor DarkGray
+    Write-Host "         Audience       : https://mcp.ai.azure.com  (pre-filled, do not change)" -ForegroundColor DarkGray
+    Write-Host "       Click  [ Connect ]  to confirm" -ForegroundColor White
+    Write-Host "    7. After connecting you land on the tool page — the connection name" -ForegroundColor White
+    Write-Host "       appears in bold at the very top next to the purple Foundry icon" -ForegroundColor White
     Write-Host "       (it will look like:  FoundryMCPServerpreview)" -ForegroundColor DarkGray
+    Write-Host "    8. Copy that name" -ForegroundColor White
     Write-Host ""
     Write-Host "  Press Enter here once the connection has been created." -ForegroundColor Yellow
     Read-Host "  [ Enter to continue ]" | Out-Null
