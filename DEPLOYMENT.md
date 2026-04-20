@@ -156,6 +156,54 @@ Accept — the SP should not outlive the workshop.
 
 ---
 
+## WebSearchAgent Deployment (Instructor)
+
+The `hosted-agents/` directory contains a **WebSearchAgent** that runs as a
+containerized hosted agent in Microsoft Foundry. It uses Bing Grounding for
+real-time web search and is demonstrated in the hosted-agents section of the
+workshop.
+
+This is a **separate deployment** from `provision.ps1`. Run it once after
+provisioning — participants do not need to do this step.
+
+### Prerequisites
+
+- `provision.ps1` completed (`.env` exists with Bing Grounding values)
+- [Azure Developer CLI (`azd`)](https://aka.ms/install-azd) installed
+- AI Foundry project in a [supported region](https://learn.microsoft.com/en-us/azure/ai-foundry/agents/concepts/hosted-agents?view=foundry&tabs=cli#region-availability) — this workshop uses **East US 2**
+
+### Deploy
+
+```powershell
+pwsh deploy-hosted-agents.ps1
+```
+
+The script:
+1. Installs the `azure.ai.agents` azd extension if needed
+2. Reads resource values from `.env` and sets them in the azd environment
+3. Runs `azd ai agent init` — **interactive**: accept the recommended values shown on screen
+4. Runs `azd deploy` — builds the container, pushes to registry, and deploys (5–10 min)
+
+On completion, the output includes the **Agent playground URL** for testing.
+
+### Tear down
+
+```powershell
+pwsh deploy-hosted-agents.ps1 -Down
+```
+
+This removes the hosted agent container and associated resources. It does **not**
+delete the AI Foundry project or any resources created by `provision.ps1`.
+
+### Notes
+
+- The hosted agent uses a separate `gpt-4o` model deployment (10K TPM capacity)
+  provisioned by azd — independent of the workshop's `gpt-5.1` deployment
+- The `BING_CONNECTION_ID` from `.env` is passed automatically
+- Detailed docs: [`hosted-agents/README.md`](hosted-agents/README.md)
+
+---
+
 ## Quick Reference
 
 ### Instructor commands
@@ -163,6 +211,8 @@ Accept — the SP should not outlive the workshop.
 | Task | Command |
 |------|---------|
 | Provision | `pwsh provision.ps1` |
+| Deploy hosted agent | `pwsh deploy-hosted-agents.ps1` |
+| Remove hosted agent | `pwsh deploy-hosted-agents.ps1 -Down` |
 | Grant access (Entra) | `pwsh grant-access.ps1 -EmailFile emails.txt` |
 | Revoke access | `pwsh revoke-access.ps1 -EmailFile emails.txt` |
 | Tear down | `pwsh teardown.ps1` |
