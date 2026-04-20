@@ -865,7 +865,6 @@ AZURE_AI_SEARCH_ENDPOINT=$($Search.Endpoint)
 AZURE_AI_SEARCH_API_KEY=$($Search.ApiKey)
 AZURE_AI_SEARCH_API_VERSION=$($Search.ApiVersion)
 SEARCH_AUTHENTICATION_METHOD=$($Search.AuthMethod)
-AZURE_SEARCH_INDEX_NAME=$($Search.IndexName)
 
 # =============================================================================
 # MCP TOOLS
