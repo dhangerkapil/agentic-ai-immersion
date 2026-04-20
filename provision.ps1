@@ -900,6 +900,65 @@ ENABLE_SENSITIVE_DATA=true
 }
 
 # ---------------------------------------------------------------------------
+# Pre-flight: model quota check
+# ---------------------------------------------------------------------------
+function Test-ModelQuota {
+    param([string]$Location, [string]$SubId)
+
+    Write-Step "Pre-flight: model quota check ($Location)..."
+
+    $usages = try {
+        Invoke-AzJson @("cognitiveservices", "usage", "list", "--location", $Location)
+    }
+    catch {
+        Write-Warn "Could not retrieve quota data — skipping check: $($_.Exception.Message)"
+        return
+    }
+
+    # Deployable SKUs only — exclude Batch, Provisioned, FineTuned, AccountCount, etc.
+    $relevant = $usages | Where-Object {
+        $_.name.value -match '^OpenAI\.(GlobalStandard|Standard)\.' -and
+        $_.name.value -notmatch 'finetune|AccountCount'
+    } | Sort-Object { $_.name.value }
+
+    $needed = 50  # capacity units requested per deployment (1 unit = 1 000 TPM)
+    $issues = @()
+
+    Write-Host ("  {0,-52} {1,7}  {2,7}  {3,9}" -f "Model", "Limit", "Used", "Available") -ForegroundColor DarkGray
+    Write-Host ("  " + ("-" * 79)) -ForegroundColor DarkGray
+
+    foreach ($u in $relevant) {
+        $avail = $u.limit - $u.currentValue
+        $warn  = $avail -lt $needed
+        $mark  = if ($warn) { " ⚠" } else { "" }
+        $color = if ($warn) { "Yellow" } else { "DarkGray" }
+        $line  = "{0,-52} {1,7:F0}  {2,7:F0}  {3,9:F0}{4}" -f $u.name.value, $u.limit, $u.currentValue, $avail, $mark
+        Write-Host "  $line" -ForegroundColor $color
+        if ($warn) { $issues += $u.name.value }
+    }
+
+    Write-Host ""
+
+    if ($issues.Count -eq 0) {
+        Write-Success "Quota looks good — all models have >= $needed units available."
+    }
+    else {
+        Write-Warn "$($issues.Count) model(s) have < $needed units available (needed per deployment)."
+        Write-Host ""
+        Write-Host "  To request a quota increase:" -ForegroundColor White
+        Write-Host "    https://aka.ms/oai/quotaincrease" -ForegroundColor DarkCyan
+        Write-Host "  Or via Azure portal:" -ForegroundColor White
+        Write-Host "    https://portal.azure.com/#view/Microsoft_Azure_ProjectOxford/CognitiveServicesHub/~/QuotaRequestV2" -ForegroundColor DarkCyan
+        Write-Host ""
+        $cont = Read-Host "  Continue provisioning anyway? (Y/n)"
+        if ($cont -match "^[Nn]$") {
+            Write-Warn "Provisioning cancelled. Resolve quota first, then rerun."
+            exit 1
+        }
+    }
+}
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 function Main {
@@ -914,6 +973,8 @@ function Main {
     $subId = $account.id
 
     $rg = New-WorkshopResourceGroup -SubId $subId
+
+    Test-ModelQuota -Location $rg.Location -SubId $subId
 
     $aiAccount = New-AIServicesAccount -ResourceGroup $rg.Name -Location $rg.Location -SubId $subId
 
