@@ -157,8 +157,8 @@ function Set-WorkshopRbac {
     )
 
     Write-Step "Assigning Azure RBAC roles (optional)..."
-    $include = Read-Host "  Configure RBAC role assignments now? (y/n)"
-    if ($include -notmatch "^[Yy]$") {
+    $include = Read-Host "  Configure RBAC role assignments now? (Y/n)"
+    if ($include -match "^[Nn]$") {
         Write-Warn "Skipping RBAC role assignment"
         return
     }
@@ -190,8 +190,8 @@ function Set-WorkshopRbac {
     }
 
     if (-not [string]::IsNullOrWhiteSpace($ProjectManagedIdentityPrincipalId)) {
-        $assignMi = Read-Host "  Assign 'Search Index Data Reader' to project managed identity (recommended, notebook 8)? (y/n)"
-        if ($assignMi -match "^[Yy]$") {
+        $assignMi = Read-Host "  Assign 'Search Index Data Reader' to project managed identity (recommended, notebook 8)? (Y/n)"
+        if ($assignMi -notmatch "^[Nn]$") {
             Ensure-RoleAssignment -RoleName "Search Index Data Reader" -AssigneeObjectId $ProjectManagedIdentityPrincipalId -AssigneePrincipalType "ServicePrincipal" -Scope $scope
         }
     }
@@ -260,8 +260,8 @@ function Get-SubscriptionInfo {
     Write-Success "Logged in"
     Write-Host "  Current subscription: $($account.name)" -ForegroundColor Cyan
 
-    $confirm = Read-Host "  Use this subscription? (y/n)"
-    if ($confirm -notmatch "^[Yy]$") {
+    $confirm = Read-Host "  Use this subscription? (Y/n)"
+    if ($confirm -match "^[Nn]$") {
         $subs = Invoke-AzJson @("account", "list",
             "--query", "[].{id:id, name:name}")
         for ($i = 0; $i -lt $subs.Count; $i++) {
@@ -596,8 +596,8 @@ function New-SearchService {
     param([string]$ResourceGroup, [string]$Location, [string]$SubId, [string]$ProjectResourceId)
 
     Write-Step "Azure AI Search (optional)..."
-    $include = Read-Host "  Create an Azure AI Search service? (y/n)"
-    if ($include -notmatch "^[Yy]$") {
+    $include = Read-Host "  Create an Azure AI Search service? (Y/n)"
+    if ($include -match "^[Nn]$") {
         Write-Warn "Skipping Azure AI Search"
         return @{
             Endpoint   = "<your-search-endpoint>"
@@ -689,8 +689,8 @@ function New-BingConnection {
     param([string]$ResourceGroup, [string]$Location, [string]$SubId, [string]$ProjectResourceId)
 
     Write-Step "Bing Search grounding (optional)..."
-    $include = Read-Host "  Create a Bing Search resource and connection? (y/n)"
-    if ($include -notmatch "^[Yy]$") {
+    $include = Read-Host "  Create a Bing Search resource and connection? (Y/n)"
+    if ($include -match "^[Nn]$") {
         Write-Warn "Skipping Bing Search"
         return @{
             ConnectionName = "<your-bing-connection-name>"
