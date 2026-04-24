@@ -19,6 +19,7 @@ This folder contains examples demonstrating workflow orchestration patterns with
 | 7 | [`7-magentic-compliance-review-with-human-input.ipynb`](7-magentic-compliance-review-with-human-input.ipynb) | Investment Plan Compliance Review | Magentic multi-agent with human approval |
 | 8 | [`8-magentic-investment-research.ipynb`](8-magentic-investment-research.ipynb) | Investment Research Analysis | Magentic multi-agent orchestration |
 | 9 | [`9-workflow-as-agent-reflection-pattern.ipynb`](9-workflow-as-agent-reflection-pattern.ipynb) | Customer Communication Quality | Reflection pattern with review loop |
+| 10 | [`10-handoff-customer-support.ipynb`](10-handoff-customer-support.ipynb) | Customer Support Handoff | Handoff orchestration with dynamic routing |
 
 ## 🚀 Prerequisites
 
@@ -40,7 +41,7 @@ This folder contains examples demonstrating workflow orchestration patterns with
 |-------|-----------|-------|
 | **Beginner** | 1 (Streaming) → 2 (Chat Streaming) | Basic workflow and streaming patterns |
 | **Intermediate** | 3 (Sequential) → 4 (Custom Executors) | Agent pipelines and custom processing |
-| **Advanced** | 5, 6 (Human-in-the-loop) → 7, 8 (Magentic) → 9 (Reflection) | Complex orchestration patterns |
+| **Advanced** | 5, 6 (Human-in-the-loop) → 7, 8 (Magentic) → 9 (Reflection) → 10 (Handoff) | Complex orchestration patterns |
 
 ## 🔧 Workflow Patterns
 
@@ -52,6 +53,7 @@ This folder contains examples demonstrating workflow orchestration patterns with
 | **Magentic** | Multi-agent collaboration with manager | 7, 8 |
 | **Reflection** | Self-review and improvement loop | 9 |
 | **Workflow-as-Agent** | Embed workflow within agent interface | 6, 9 |
+| **Handoff** | Dynamic agent-to-agent control transfer | 10 |
 
 ## 🔍 Key APIs Used
 
@@ -65,6 +67,9 @@ This folder contains examples demonstrating workflow orchestration patterns with
 | `MagenticBuilder` | Build multi-agent workflows | 7, 8 |
 | `AgentResponseUpdate` | Emit streaming responses | 6, 9 |
 | `AgentRunUpdateEvent` | Add events to context | 6, 9 |
+| `HandoffBuilder` | Build handoff orchestration workflows | 10 |
+| `HandoffAgentUserRequest` | Handle user input in handoff workflows | 10 |
+| `FunctionApprovalRequestContent` | Handle tool approval requests | 10 |
 
 ## 💼 Business Use Cases
 
@@ -79,6 +84,7 @@ This folder contains examples demonstrating workflow orchestration patterns with
 | **Plan Compliance Review** | Ensure compliance before execution | 7 |
 | **Multi-Agent Research** | Multi-analyst collaboration for research | 8 |
 | **Communication Quality** | Review and improve communications | 9 |
+| **Customer Support Handoff** | Dynamic agent routing for support | 10 |
 
 ## 📚 Related Resources
 

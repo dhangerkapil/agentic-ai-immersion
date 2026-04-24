@@ -1,0 +1,74 @@
+{
+  "loan_portfolio": [
+    {
+      "loan_id": "L001",
+      "customer": "John Smith",
+      "loan_type": "Mortgage",
+      "principal": 350000,
+      "interest_rate": 6.5,
+      "term_years": 30,
+      "monthly_payment": 2212.24,
+      "status": "Current"
+    },
+    {
+      "loan_id": "L002",
+      "customer": "Sarah Johnson",
+      "loan_type": "Auto Loan",
+      "principal": 45000,
+      "interest_rate": 7.2,
+      "term_years": 5,
+      "monthly_payment": 894.52,
+      "status": "Current"
+    },
+    {
+      "loan_id": "L003",
+      "customer": "Mike Chen",
+      "loan_type": "Personal Loan",
+      "principal": 25000,
+      "interest_rate": 9.5,
+      "term_years": 3,
+      "monthly_payment": 801.23,
+      "status": "Current"
+    },
+    {
+      "loan_id": "L004",
+      "customer": "Emily Davis",
+      "loan_type": "Mortgage",
+      "principal": 500000,
+      "interest_rate": 6.25,
+      "term_years": 15,
+      "monthly_payment": 4293.77,
+      "status": "Current"
+    },
+    {
+      "loan_id": "L005",
+      "customer": "Robert Wilson",
+      "loan_type": "Business Loan",
+      "principal": 150000,
+      "interest_rate": 8.0,
+      "term_years": 7,
+      "monthly_payment": 2336.47,
+      "status": "30 Days Late"
+    },
+    {
+      "loan_id": "L006",
+      "customer": "Lisa Anderson",
+      "loan_type": "Home Equity",
+      "principal": 75000,
+      "interest_rate": 7.5,
+      "term_years": 10,
+      "monthly_payment": 890.64,
+      "status": "Current"
+    },
+    {
+      "loan_id": "L007",
+      "customer": "David Brown",
+      "loan_type": "Auto Loan",
+      "principal": 32000,
+      "interest_rate": 6.9,
+      "term_years": 4,
+      "monthly_payment": 764.89,
+      "status": "60 Days Late"
+    }
+  ]
+}

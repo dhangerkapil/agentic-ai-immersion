@@ -141,13 +141,13 @@ Set environment variables to point to your Azure resources:
 
 ```powershell
 # Basic resource info
-azd env set AZURE_SUBSCRIPTION_ID <your-subscription-id>
-azd env set AZURE_RESOURCE_GROUP <your-resource-group>
-azd env set AZURE_AI_PROJECT_NAME <your-project-name>
+azd env set AZURE_SUBSCRIPTION_ID 93c5449c-bbb2-4249-9461-ddf749e03430
+azd env set AZURE_RESOURCE_GROUP demoaifoundry
+azd env set AZURE_AI_PROJECT_NAME demoproject
 
 # Required for hosted agent deployment
-azd env set AZURE_AI_PROJECT_ID "/subscriptions/<subscription-id>/resourceGroups/<resource-group>/providers/Microsoft.CognitiveServices/accounts/<account-name>/projects/<project-name>"
-azd env set AI_FOUNDRY_PROJECT_ENDPOINT "https://<account-name>.services.ai.azure.com/api/projects/<project-name>"
+azd env set AZURE_AI_PROJECT_ID "/subscriptions/93c5449c-bbb2-4249-9461-ddf749e03430/resourceGroups/demoaifoundry/providers/Microsoft.CognitiveServices/accounts/demopocaifoundry/projects/demoproject"
+azd env set AI_FOUNDRY_PROJECT_ENDPOINT "https://demopocaifoundry.services.ai.azure.com/api/projects/demoproject"
 ```
 
 > 💡 **Tip:** Replace placeholders with your actual values.
