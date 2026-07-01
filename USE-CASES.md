@@ -1,10 +1,10 @@
 # 💼 Industry Use Cases
 
 [![Microsoft Foundry](https://img.shields.io/badge/Microsoft-Foundry-blue?style=for-the-badge&logo=microsoft)](https://ai.azure.com)
-[![Python](https://img.shields.io/badge/Python-3.10+-green?style=for-the-badge&logo=python)](https://python.org)
+[![Python](https://img.shields.io/badge/Python-3.12+-green?style=for-the-badge&logo=python)](https://python.org)
 [![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](LICENSE)
 
-**49 Real-World FSI (Financial Services Industry) Use Cases**
+**57 Real-World FSI (Financial Services Industry) Use Cases**
 
 *Practical AI agent applications for enterprise banking, insurance, and investment scenarios mapped to each workshop notebook.*
 
@@ -12,7 +12,7 @@
 
 ---
 
-This workshop features **49 real-world FSI use cases** across all notebooks, demonstrating practical AI agent applications for enterprise banking, insurance, and investment scenarios.
+This workshop features **57 real-world FSI use cases** across all notebooks, demonstrating practical AI agent applications for enterprise banking, insurance, and investment scenarios.
 
 | Use Case | Description | Technology | Notebook |
 |----------|-------------|------------|----------|
@@ -25,6 +25,14 @@ This workshop features **49 real-world FSI use cases** across all notebooks, dem
 | Platform Operations Assistant | Model discovery, deployment management, evaluation creation | Azure AI Agents v2, Foundry MCP Server | [7-mcp-tools.ipynb](https://github.com/dhangerkapil/agentic-ai-immersion/blob/main/azure-ai-agents/7-mcp-tools.ipynb) |
 | Multi-Source Fraud Investigation | Investigate fraud using patterns, regulations, and procedures | Azure AI Agents v2, Foundry IQ | [8-foundry-IQ-agents.ipynb](https://github.com/dhangerkapil/agentic-ai-immersion/blob/main/azure-ai-agents/8-foundry-IQ-agents.ipynb) |
 | Personalized Banking Assistant | Remembers customer preferences for personalized guidance | Azure AI Agents v2, Memory Search | [9-agent-memory-search.ipynb](https://github.com/dhangerkapil/agentic-ai-immersion/blob/main/azure-ai-agents/9-agent-memory-search.ipynb) |
+| Scheduled Compliance Monitor | Run a benefits-compliance agent automatically on a daily schedule | Azure AI Agents v2, Routines (preview) | [11-routines.ipynb](https://github.com/dhangerkapil/agentic-ai-immersion/blob/main/azure-ai-agents/11-routines.ipynb) |
+| Personalized Benefits Memory | Long-term client-preference memory across sessions | Azure AI Agents v2, Memory Stores (preview) | [12-agent-memory.ipynb](https://github.com/dhangerkapil/agentic-ai-immersion/blob/main/azure-ai-agents/12-agent-memory.ipynb) |
+| Cost-Optimized Loan Triage | Route simple vs. complex requests to cheap/strong models | Azure AI Agents v2, Model Router | [13-model-router.ipynb](https://github.com/dhangerkapil/agentic-ai-immersion/blob/main/azure-ai-agents/13-model-router.ipynb) |
+| Specialist Delegation | One agent delegates detailed work to another over A2A | Azure AI Agents v2, Agent-to-Agent (preview) | [14-agent-to-agent-a2a.ipynb](https://github.com/dhangerkapil/agentic-ai-immersion/blob/main/azure-ai-agents/14-agent-to-agent-a2a.ipynb) |
+| Docs-Grounded Benefits Agent | Ground answers in documentation via a managed MCP server | Azure AI Agents v2, Managed MCP (preview) | [15-managed-mcp-connectors.ipynb](https://github.com/dhangerkapil/agentic-ai-immersion/blob/main/azure-ai-agents/15-managed-mcp-connectors.ipynb) |
+| Employee Benefits Review (hosted) | Structured benefits review via the Invocations protocol | Agent Framework, Hosted Agent | [benefits-review-invocations](https://github.com/dhangerkapil/agentic-ai-immersion/blob/main/hosted-agents/benefits-review-invocations) |
+| Employee Benefits Advisor (hosted) | Conversational advisor with Foundry Toolbox + Skills (Responses) | Agent Framework, Hosted Agent | [benefits-advisor-responses](https://github.com/dhangerkapil/agentic-ai-immersion/blob/main/hosted-agents/benefits-advisor-responses) |
+| Benefits Agent GitOps Pipeline | Build, deploy, and operate a hosted agent via GitHub Actions | AgentOps, GitOps | [AgentOps](https://github.com/dhangerkapil/agentic-ai-immersion/blob/main/AgentOps) |
 | Financial Advisor Basics | Banking operations with account balance and loan inquiries | Agent Framework, Azure AI Agents | [1-azure-ai-basic.ipynb](https://github.com/dhangerkapil/agentic-ai-immersion/blob/main/agent-framework/agents/azure-ai-agents/1-azure-ai-basic.ipynb) |
 | Investment Portfolio Management | Configurable advisor with portfolio allocation recommendations | Agent Framework, Explicit Settings | [2-azure-ai-with-explicit-settings.ipynb](https://github.com/dhangerkapil/agentic-ai-immersion/blob/main/agent-framework/agents/azure-ai-agents/2-azure-ai-with-explicit-settings.ipynb) |
 | Persistent Financial Advisor | Reusable banking agent retaining configuration across sessions | Agent Framework, Existing Agent | [3-azure-ai-with-existing-ai-agent.ipynb](https://github.com/dhangerkapil/agentic-ai-immersion/blob/main/agent-framework/agents/azure-ai-agents/3-azure-ai-with-existing-ai-agent.ipynb) |

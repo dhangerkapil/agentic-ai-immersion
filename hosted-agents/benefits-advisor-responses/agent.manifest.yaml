@@ -1,0 +1,54 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/microsoft/AgentSchema/refs/heads/main/schemas/v1.0/AgentManifest.yaml
+name: benefits-advisor-responses
+displayName: "Employee Benefits Cost Advisor (Responses Protocol)"
+description: >
+  Conversational employee-benefits cost & benchmarking advisor. Uses the Responses
+  protocol for multi-turn natural-language interaction, a Foundry Toolbox
+  (web_search + code_interpreter) for real-time research and calculations, and
+  Foundry Skills for structured methodology and regulatory guidance.
+metadata:
+  tags:
+    - Agent Framework
+    - AI Agent Hosting
+    - Responses Protocol
+    - Foundry Toolbox
+    - Foundry Skills
+    - Benefits Analysis
+template:
+  name: benefits-advisor-responses
+  kind: hosted
+  protocols:
+    # RESPONSES protocol enables multi-turn conversation, model-directed tool use,
+    # and streaming — the key differentiator from the Invocations protocol used by
+    # the Benefits Review agent.
+    - protocol: responses
+      version: 1.0.0
+  environment_variables:
+    - name: AZURE_AI_MODEL_DEPLOYMENT_NAME
+      value: "{{AZURE_AI_MODEL_DEPLOYMENT_NAME}}"
+    - name: TOOLBOX_NAME
+      value: "{{TOOLBOX_NAME}}"
+    - name: SKILL_NAMES
+      value: "{{SKILL_NAMES}}"
+parameters:
+  properties:
+    - name: TOOLBOX_NAME
+      secret: false
+      description: Name of the Foundry Toolbox containing web_search and code_interpreter tools
+    - name: SKILL_NAMES
+      secret: false
+      description: Comma-separated list of Foundry skill names to embed at startup
+resources:
+  - kind: model
+    id: gpt-4.1-mini
+    name: AZURE_AI_MODEL_DEPLOYMENT_NAME
+  # FOUNDRY TOOLBOX: provides web_search and code_interpreter as MCP tools. The
+  # model decides WHEN to call these tools based on the conversation — the key
+  # advantage of the Responses protocol over Invocations.
+  - kind: toolbox
+    name: agent-tools
+    tools:
+      - type: web_search
+        name: web_search
+      - type: code_interpreter
+        name: code_interpreter

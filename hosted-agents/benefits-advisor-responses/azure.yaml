@@ -1,0 +1,34 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json
+
+requiredVersions:
+    extensions:
+        azure.ai.agents: '>=0.1.0-preview'
+name: benefits-advisor-responses
+services:
+    benefits-advisor-responses:
+        project: .
+        host: azure.ai.agent
+        language: python
+        config:
+            container:
+                resources:
+                    cpu: "0.5"
+                    memory: 1Gi
+            deployments:
+                - model:
+                    format: OpenAI
+                    name: gpt-4.1-mini
+                    version: "2025-04-14"
+                  name: gpt-4.1-mini
+                  sku:
+                    capacity: 2425
+                    name: GlobalStandard
+            toolboxes:
+                - name: agent-tools
+                  tools:
+                    - name: web_search
+                      type: web_search
+                    - name: code_interpreter
+                      type: code_interpreter
+infra:
+    provider: bicep

@@ -1,0 +1,11 @@
+# Employee Benefits Review — Foundry Hosted Agent (Invocations protocol)
+# SYNC: agent-framework + agent-framework-foundry-hosting MUST match root requirements.txt.
+# Bump there first, then mirror here. Hosted runtime = Python 3.14.
+agent-framework[foundry]==1.9.0
+agent-framework-foundry-hosting==1.0.0a260618
+
+# Entra (AAD) authentication
+azure-identity
+
+# Local .env loading (no-op when hosted)
+python-dotenv

@@ -1,0 +1,12 @@
+# AgentOps — Employee Benefits Concierge (GitOps hosted agent)
+# SYNC: agent-framework + foundry-hosting MUST match root requirements.txt. Hosted runtime = Python 3.14.
+agent-framework[foundry]==1.9.0
+agent-framework-foundry-hosting==1.0.0a260618
+azure-ai-projects>=2.2.0
+azure-identity
+httpx
+python-dotenv
+
+# Tests
+pytest
+pytest-asyncio

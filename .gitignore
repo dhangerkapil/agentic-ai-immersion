@@ -3,6 +3,12 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Local workshop validation run artifacts (logs + temp executed notebooks)
+.validation-run/
+
+# Notebook 10 generates this hosted-agent project at runtime (azd scaffolding) — not source
+azure-ai-agents/my-hosted-agent/
+
 # =============================================================================
 # 🔐 SENSITIVE FILES - NEVER COMMIT
 # =============================================================================
@@ -266,3 +272,33 @@ run_notebooks.py
 run_one_nb.py
 *.docx~
 ~$*
+
+# =============================================================================
+# 🤖 AI DEV TOOLING — local only, NEVER pushed to remote
+# =============================================================================
+# These help build/maintain this repo with AI agents but are not workshop
+# content. They remain on your machine and keep working locally; they are
+# simply excluded from the published workshop.
+#
+# Squad AI development team (roster, decisions, agents, logs, casting, RAI)
+.squad/
+# Local Copilot process skills (git-workflow, reviewer-protocol, etc.)
+.copilot/
+# Squad coordinator governance file
+.github/agents/
+# Squad GitHub Actions automation (heartbeat, triage, issue/label sync)
+.github/workflows/*squad*
+.github/workflows/sync-squad-labels.yml
+# Squad state MCP server config + append-only merge rules (root only)
+/.mcp.json
+/.gitattributes
+
+# Python test cache
+.pytest_cache/
+.squad/log/
+.squad/decisions/inbox/
+.squad/sessions/
+.squad/.scratch/
+.squad/.cache/
+# Squad: SubSquad activation file (local to this machine)
+.squad-workstream

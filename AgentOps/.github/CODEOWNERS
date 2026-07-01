@@ -1,0 +1,7 @@
+# AgentOps review gates — prompts, agent logic, and infra require expert review.
+# Replace the placeholder teams with your GitHub org teams.
+/AgentOps/src/prompts/   @your-org/ai-engineering
+/AgentOps/src/agents/    @your-org/ai-engineering
+/AgentOps/src/tools/     @your-org/ai-engineering
+/AgentOps/infra/         @your-org/platform
+/AgentOps/.github/       @your-org/platform

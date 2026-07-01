@@ -1,0 +1,33 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/microsoft/AgentSchema/refs/heads/main/schemas/v1.0/ContainerAgent.yaml
+
+kind: hosted
+name: benefits-advisor-responses
+description: |
+    Conversational employee-benefits cost & benchmarking advisor. Uses the Responses protocol for multi-turn natural-language interaction, a Foundry Toolbox (web_search + code_interpreter) for real-time research and calculations, and Foundry Skills for structured methodology and regulatory guidance.
+metadata:
+    tags:
+        - Agent Framework
+        - AI Agent Hosting
+        - Responses Protocol
+        - Foundry Toolbox
+        - Foundry Skills
+        - Benefits Analysis
+protocols:
+    - protocol: responses
+      version: 1.0.0
+resources:
+    cpu: "0.5"
+    memory: 1Gi
+environment_variables:
+    - name: AZURE_AI_MODEL_DEPLOYMENT_NAME
+      value: gpt-4.1-mini
+    - name: TOOLBOX_NAME
+      value: ""
+    - name: SKILL_NAMES
+      value: ""
+    - name: TOOLBOX_AGENT_TOOLS_MCP_ENDPOINT
+      value: ${TOOLBOX_AGENT_TOOLS_MCP_ENDPOINT}
+code_configuration:
+    runtime: python_3_14
+    entry_point: main.py
+    dependency_resolution: remote_build

@@ -1,0 +1,30 @@
+name: Validate Agent
+
+# Runs on every pull request that touches the AgentOps example.
+on:
+  pull_request:
+    branches: [main]
+    paths: ["AgentOps/**"]
+
+jobs:
+  validate:
+    name: Validate config, lint, unit tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: AgentOps
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Validate agent config and prompts
+        run: python scripts/validate_agent.py
+
+      - name: Run unit tests
+        run: pytest tests/unit -v

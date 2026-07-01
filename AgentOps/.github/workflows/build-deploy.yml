@@ -1,0 +1,98 @@
+name: Build and Deploy (AgentOps)
+
+# Runs on merge to main. Builds the image once, pushes to ACR, deploys to the dev
+# Foundry project, and smoke-tests it. Promotion to test/prod is a reference pattern
+# (see the commented job and README "Promotion").
+on:
+  push:
+    branches: [main]
+    paths: ["AgentOps/**"]
+
+env:
+  REGISTRY: cr52fuduue6hkvi.azurecr.io
+  IMAGE_NAME: benefits-concierge
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: AgentOps
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - run: python scripts/validate_agent.py
+      - run: pytest tests/unit -v
+
+  build:
+    needs: validate
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    outputs:
+      image_tag: ${{ steps.meta.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Azure login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - name: Log in to Azure Container Registry
+        run: az acr login --name ${{ env.REGISTRY }}
+      - name: Extract image metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: type=sha,format=short
+      - name: Build and push image
+        uses: docker/build-push-action@v6
+        with:
+          context: AgentOps
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+
+  deploy-dev:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: dev
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Azure login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - name: Deploy agent to Foundry (dev)
+        run: |
+          az ai foundry agent deploy \
+            --project ${{ vars.FOUNDRY_PROJECT_DEV }} \
+            --image ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.build.outputs.image_tag }}
+      - name: Smoke test the deployment
+        run: |
+          pip install -r AgentOps/requirements.txt
+          python AgentOps/scripts/smoke_test.py
+
+  # --- Promotion to test/prod (reference) ---------------------------------------
+  # Reuse the SAME image tag (needs.build.outputs.image_tag) and gate each promotion
+  # behind a GitHub Environment approval. Example:
+  #
+  # deploy-test:
+  #   needs: deploy-dev
+  #   environment: test        # requires a named reviewer to approve
+  #   ...same steps, --project ${{ vars.FOUNDRY_PROJECT_TEST }}
+  #
+  # deploy-prod:
+  #   needs: deploy-test
+  #   environment: prod        # second approval gate
+  #   ...same steps, --project ${{ vars.FOUNDRY_PROJECT_PROD }}

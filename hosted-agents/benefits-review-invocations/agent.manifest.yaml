@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/microsoft/AgentSchema/refs/heads/main/schemas/v1.0/AgentManifest.yaml
+name: benefits-review-invocations
+displayName: "Employee Benefits Review (Invocations Protocol)"
+description: >
+  Structured employee-benefits review agent. Uses the Invocations protocol: a single
+  structured request returns a structured benefits review (summary, strengths, gaps,
+  benchmark positioning, recommendations). Ideal for batch and API-to-API integration.
+metadata:
+  tags:
+    - Agent Framework
+    - AI Agent Hosting
+    - Invocations Protocol
+    - Benefits Analysis
+template:
+  name: benefits-review-invocations
+  kind: hosted
+  protocols:
+    - protocol: invocations
+      version: 1.0.0
+  environment_variables:
+    - name: AZURE_AI_MODEL_DEPLOYMENT_NAME
+      value: "{{AZURE_AI_MODEL_DEPLOYMENT_NAME}}"
+resources:
+  - kind: model
+    id: gpt-4.1-mini
+    name: AZURE_AI_MODEL_DEPLOYMENT_NAME

@@ -1,0 +1,14 @@
+# Employee Benefits Cost Advisor — Foundry Hosted Agent (Responses protocol)
+# SYNC: agent-framework + agent-framework-foundry-hosting MUST match root requirements.txt.
+# Bump there first, then mirror here. Hosted runtime = Python 3.14.
+agent-framework[foundry]==1.9.0
+agent-framework-foundry-hosting==1.0.0a260618
+
+# Entra (AAD) authentication
+azure-identity
+
+# HTTP client for the Foundry Toolbox MCP connection
+httpx
+
+# Local .env loading (no-op when hosted)
+python-dotenv

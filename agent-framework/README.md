@@ -1,6 +1,10 @@
 # 🤖 Microsoft Agent Framework Samples
 
+[← Back to main README](../README.md)
+
 Practical notebooks and reference material for building Microsoft Agent Framework solutions across agents, workflows, memory, middleware, and observability scenarios — all with **real-world business** use cases.
+
+> 🧭 **New here?** Complete the [main README setup](../README.md#-getting-started) (venv, `az login`, repo-root `.env`, permissions) first — then come back.
 
 ## Table of Contents
 
@@ -25,7 +29,7 @@ All notebooks feature **business use cases** including application processing, c
 
 | Requirement | Details |
 |-------------|---------|
-| **Python** | 3.10 or later |
+| **Python** | 3.12+ (use the repo-root venv) |
 | **Azure Subscription** | Access to Microsoft Foundry |
 | **Azure CLI** | 2.60+ with active `az login` session |
 | **Optional** | Redis (distributed threads), Application Insights (telemetry) |
@@ -34,11 +38,12 @@ All notebooks feature **business use cases** including application processing, c
 
 1. **Install packages** — Install the preview roll-up package or specific integrations as needed.
 
-2. **Configure environment variables** — Copy `.env.example` to `.env` and update with your Azure resources:
+2. **Configure environment variables** — the notebooks read `.env` from the **repository root** (one level up). Copy `../.env.example` to `../.env` and fill in your Azure resources — no per-folder `.env` is needed:
    - `AI_FOUNDRY_PROJECT_ENDPOINT` — Your Microsoft Foundry project endpoint
    - `AZURE_OPENAI_ENDPOINT` — Your Azure OpenAI endpoint
    - `AZURE_OPENAI_CHAT_DEPLOYMENT_NAME` — Model deployment name (e.g., gpt-4o)
    - Additional variables as needed: `AZURE_AI_SEARCH_ENDPOINT`, Redis connection strings
+   - **Leave `AZURE_OPENAI_API_KEY` blank** — these notebooks use Entra ID (`az login`), not keys
 
 3. **Verify authentication** — Run `az account show` to confirm the CLI is signed in and targeting the correct subscription.
 
@@ -179,8 +184,9 @@ Graph-based orchestration with business use cases. See [workflows/README.md](wor
 
 | Issue | Solution |
 |-------|----------|
+| **401 / 403 (Unauthorized / Forbidden)** | Almost always role propagation — RBAC takes **5–15 min** after [setup-permissions](../README.md#step-6-required-azure-rbac-roles--storage-access). Wait and re-run. |
 | **Authentication failures** | Re-run `az login` and confirm Azure AI permissions |
-| **Missing environment variables** | Verify `.env` mirrors the keys called out in notebook setup cells |
+| **Missing environment variables** | Verify the **repo-root** `.env` mirrors the keys called out in notebook setup cells |
 | **Package import errors** | Ensure `agent-framework` packages installed in the same interpreter as Jupyter |
 | **Redis connectivity** | Update connection string and confirm service is reachable |
 | **Application Insights delay** | Telemetry can take a few minutes; use Live Metrics Stream for real-time debugging |

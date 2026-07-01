@@ -1,7 +1,7 @@
 # 🚀 Agentic AI Immersion Workshop
 
 [![Microsoft Foundry](https://img.shields.io/badge/Microsoft-Foundry-blue?style=for-the-badge&logo=microsoft)](https://ai.azure.com)
-[![Python](https://img.shields.io/badge/Python-3.10+-green?style=for-the-badge&logo=python)](https://python.org)
+[![Python](https://img.shields.io/badge/Python-3.12+-green?style=for-the-badge&logo=python)](https://python.org)
 [![Jupyter](https://img.shields.io/badge/Jupyter-Lab-orange?style=for-the-badge&logo=jupyter)](https://jupyter.org)
 [![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](LICENSE)
 
@@ -16,7 +16,7 @@
 - [🎯 Mission Statement](#-mission-statement)
 - [📁 Repository Structure](#-repository-structure)
 - [🚀 Getting Started](#-getting-started)
-  - [Required Azure RBAC Roles](#step-5-required-azure-rbac-roles)
+  - [Required Azure RBAC Roles](#step-6-required-azure-rbac-roles--storage-access)
 - [📚 Learning Path](#-learning-path)
 - [💼 Industry Use Cases](#-industry-use-cases)
 - [🛠️ Bring Your Own Use Case](#️-bring-your-own-use-case)
@@ -61,7 +61,12 @@ agentic-ai-immersion-day/
 │   ├── 7-mcp-tools.ipynb                      # MCP integration
 │   ├── 8-foundry-IQ-agents.ipynb              # 🧠 Foundry IQ - Agentic retrieval
 │   ├── 9-agent-memory-search.ipynb            # Memory patterns
-│   └── 10-hosted-agent-with-skills.ipynb      # 🏦 Hosted agent + Skills (FSI)
+│   ├── 10-hosted-agent-with-skills.ipynb      # 🏦 Hosted agent + Skills (FSI)
+│   ├── 11-routines.ipynb                      # 🔁 Routines — schedule an agent (preview)
+│   ├── 12-agent-memory.ipynb                  # 🧠 Memory stores (preview)
+│   ├── 13-model-router.ipynb                  # 🔀 Cost-optimized model routing
+│   ├── 14-agent-to-agent-a2a.ipynb            # 🤝 Agent-to-Agent (A2A) (preview)
+│   └── 15-managed-mcp-connectors.ipynb        # 🔌 Managed MCP connectors (preview)
 │
 ├── 🤖⚙️ agent-framework/                       # Microsoft Agent Framework (Business use cases)
 │   ├── agents/azure-ai-agents/                # 9 agent notebooks (1-9)
@@ -79,14 +84,16 @@ agentic-ai-immersion-day/
 │   ├── 4-tool-call-accuracy-evaluation.ipynb  # Tool accuracy
 │   └── 5-red-team-security-testing.ipynb      # Security testing
 │
-├── 🚀 hosted-agents/                          # Hosted Agent Deployment
-│   ├── azure.yaml                             # azd project configuration
-│   ├── README.md                              # Deployment guide
-│   └── src/WebSearchAgent/                    # Web search agent
-│       ├── agent.yaml                         # Agent definition
-│       ├── main.py                            # Agent implementation
-│       ├── Dockerfile                         # Container definition
-│       └── requirements.txt                   # Agent dependencies
+├── 🚀 hosted-agents/                          # Hosted Agents — two hosting protocols (FSI: employee benefits)
+│   ├── README.md                              # Protocol comparison + setup
+│   ├── benefits-review-invocations/           # Invocations protocol (structured request → response)
+│   └── benefits-advisor-responses/            # Responses protocol + Foundry Toolbox + Skills
+│
+├── 🔧 AgentOps/                                # GitOps deployment example (CI/CD, IaC, tests)
+│   ├── .github/workflows/                     # validate / build-deploy / rollback
+│   ├── src/                                    # agent, prompts, toolbox-as-code
+│   ├── infra/                                  # Bicep + per-environment params
+│   └── tests/                                  # unit / integration / smoke
 │
 ├── 🧩 byouc/                                   # Bring Your Own Use Case
 │   ├── Agentic_UseCase_Spec.md                # Use case spec template (Markdown)
@@ -94,6 +101,9 @@ agentic-ai-immersion-day/
 │
 ├── 🐳 .devcontainer/                          # Dev Container configuration
 │   └── devcontainer.json                      # Container settings
+│
+├── 🔐 scripts/                                # Setup automation
+│   └── setup-permissions.ps1                  # One-shot RBAC + storage access (Entra, idempotent)
 │
 ├── .env.example                               # Environment template
 ├── requirements.in                            # Unpinned dependencies
@@ -103,7 +113,19 @@ agentic-ai-immersion-day/
 
 ---
 
-## 🚀 Getting Started
+## 📖 Key Concepts (30-second glossary)
+
+| Term | Definition |
+|------|-----------|
+| **Microsoft Foundry** | Azure's platform for building, deploying, and managing AI agents |
+| **Agent** | An AI that uses tools (code, search, APIs) to complete tasks |
+| **Foundry IQ** | Knowledge Bases — agentic retrieval where the agent decides what to search |
+| **MCP** | Model Context Protocol — a standard for connecting agents to external tools |
+| **Hosted Agent** | An agent packaged as a container and run/scaled by Foundry |
+| **Managed Identity** | An Azure-managed credential (no API keys) used by services |
+| **FSI** | Financial Services Industry — the example domain throughout |
+
+## �🚀 Getting Started
 
 ### Option A: Dev Container (Recommended) 🐳
 
@@ -134,7 +156,7 @@ git clone https://github.com/dhangerkapil/agentic-ai-immersion-day.git
 cd agentic-ai-immersion-day
 
 # Verify Python version
-python --version  # Python 3.10+ required
+python --version  # Python 3.12+ required
 ```
 
 #### Step 2: Environment Setup
@@ -148,39 +170,71 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-#### Step 3: Configure Environment Variables
+#### Step 3: Sign in to Azure
 
-1. Copy `.env.example` to `.env`
-2. Update with your Azure resources:
-
-```env
-# Required
-AI_FOUNDRY_PROJECT_ENDPOINT=https://your-project.services.ai.azure.com
-AZURE_OPENAI_API_KEY=your-api-key
-AZURE_AI_MODEL_DEPLOYMENT_NAME=gpt-4o
-
-# Optional (for specific notebooks)
-AZURE_AI_SEARCH_ENDPOINT=https://your-search.search.windows.net
+```powershell
+az login           # opens a browser; pick the subscription that has your Foundry project
+az account show    # confirm the right subscription is active
 ```
 
-### Step 4: Microsoft Foundry Setup
+> 🔐 This workshop is **Entra-only**: every notebook authenticates with `DefaultAzureCredential` (your `az login` session) — **no API keys**. Stay signed in for all later steps.
 
-1. **Create Microsoft Foundry Resource** — [Azure Portal](https://portal.azure.com/#create/Microsoft.CognitiveServicesAIFoundry)
-2. **Deploy Models** — `gpt-4o`, `gpt-4o-mini`, `text-embedding-3-large`
-3. **Connect Services** — Azure AI Search, Bing Search, Application Insights
+#### Step 4: Create your Foundry project & deploy models
 
-For detailed setup instructions, see [Microsoft Foundry Documentation](https://learn.microsoft.com/en-us/azure/ai-foundry/).
+1. **Create a Foundry resource** — [ai.azure.com](https://ai.azure.com) → **Create project** (creates the account + a project + default storage); pick a region like East US 2.
+2. **Deploy models** — project → **Models + endpoints** → **Deploy** each of `gpt-4o`, `gpt-4o-mini`, `text-embedding-3-large` (status “Succeeded” after a few minutes).
+3. **Connect services** — add Azure AI Search + Application Insights connections (project → **Connections**) for the search/observability notebooks.
 
-### Step 5: Required Azure RBAC Roles
+For detailed setup, see [Microsoft Foundry Documentation](https://learn.microsoft.com/en-us/azure/ai-foundry/).
 
-Assign the following roles based on the notebooks you plan to run. Each role specifies whether it should be assigned to **your user identity** or to the **Project Managed Identity**.
+#### Step 5: Configure Environment Variables
+
+1. Copy `.env.example` to `.env` **at the repo root** (`cp .env.example .env`)
+2. Fill in the values from the project you just created. **`.env.example` is the annotated source of truth** for every variable — the essentials are:
+
+```env
+# Microsoft Foundry project (azure-ai-agents/ + observability notebooks)
+AI_FOUNDRY_PROJECT_ENDPOINT=https://<your-foundry>.services.ai.azure.com/api/projects/<your-project>
+AZURE_AI_MODEL_DEPLOYMENT_NAME=gpt-4o
+EMBEDDING_MODEL_DEPLOYMENT_NAME=text-embedding-3-large
+
+# Agent Framework Foundry client convention (agent-framework/ notebooks)
+FOUNDRY_PROJECT_ENDPOINT=https://<your-foundry>.services.ai.azure.com/api/projects/<your-project>
+FOUNDRY_MODEL=gpt-4o
+
+# Azure OpenAI v1 surface (agent-framework workflows / middleware / threads)
+AZURE_OPENAI_ENDPOINT=https://<your-foundry>.openai.azure.com/openai/v1
+AZURE_OPENAI_API_KEY=        # leave BLANK — this workshop uses Entra ID (az login), not keys
+
+# Azure AI Search (notebooks 5 & 8, context-providers/2)
+AZURE_AI_SEARCH_ENDPOINT=https://<your-search>.search.windows.net
+```
+
+> 🔐 **Entra-only auth:** every notebook authenticates with `DefaultAzureCredential` (`az login`) — **no API keys**. Leave `AZURE_OPENAI_API_KEY` blank; if your account has `disableLocalAuth=true`, keys won't work at all.
+
+**Where to find these values:** Foundry portal ([ai.azure.com](https://ai.azure.com)) → your project → **Overview/Settings** has the project endpoint; **Deployments** lists your model names; the AI Search URL is on the Search resource **Overview** in the Azure portal.
+
+### Step 6: Required Azure RBAC Roles & Storage Access
+
+> ⚡ **Fastest path — run the setup script** (idempotent, Entra-only). It assigns every role below to your user, the project managed identity, **and** the AI Search managed identity, and opens storage networking:
+>
+> ```powershell
+> ./scripts/setup-permissions.ps1 -SubscriptionId "<sub-id>" -ResourceGroup "<rg>" `
+>     -AccountName "<foundry-account>" -ProjectName "<project>" `
+>     -SearchServiceName "<search-service>" -StorageAccountName "<storage>" -OpenStoragePublicAccess
+> ```
+>
+> Prefer to assign roles by hand? The full breakdown — and the exact `az` commands the script runs — follow.
+
+Authentication is **Entra-only** (`az login` — no API keys). Roles go to one of three identities: **your user**, the **Project Managed Identity** (the project's own identity, under *Foundry project → Identity*), or the **AI Search service Managed Identity**. Foundry resources use the `Microsoft.CognitiveServices/accounts/<account>` scope (not ML workspaces).
 
 #### 🔑 Core Roles (Required for All Notebooks)
 
 | Role | Assignee | Resource | Purpose |
 |------|----------|----------|---------|
-| **Azure AI Developer** | User | AI Foundry Project | Create and manage agents, threads, and runs |
-| **Cognitive Services OpenAI User** | User | AI Foundry Project | Access OpenAI model deployments |
+| **Foundry User** | User **and** Project MI | Foundry account | Data-plane build access. ⚠️ SDK/CLI-created projects don't grant this to the project MI automatically — the #1 cause of `ProjectMIUnauthorized` |
+| **Cognitive Services OpenAI User** | User, Project MI, Search MI | Foundry account | Access OpenAI model deployments (chat + embeddings) |
+| **Cognitive Services User** | Project MI **and** Search MI | Foundry account | Foundry IQ agentic-retrieval reasoning model (notebook 8) |
 
 #### 📁 File Search & Storage Roles
 
@@ -197,48 +251,66 @@ Assign the following roles based on the notebooks you plan to run. Each role spe
 | **Search Service Contributor** | User | AI Search Resource | Manage search service, create knowledge bases | `8-foundry-IQ-agents.ipynb` |
 | **Search Index Data Reader** | Managed Identity | AI Search Resource | ⚠️ **CRITICAL**: Agent runtime access to knowledge bases | `8-foundry-IQ-agents.ipynb` |
 
-#### ️ Role Assignment Commands
+#### ️ Role Assignment Commands (the same set the script runs)
 
 ```powershell
-# Get your user principal ID
-$USER_PRINCIPAL_ID = (az ad signed-in-user show --query id -o tsv)
+# ── Fill in your resource names ──
+$SUB = "<sub-id>"; $RG = "<rg>"; $ACCOUNT = "<foundry-account>"; $PROJECT = "<project>"
+$SEARCH = "<search-service>"; $STORAGE = "<storage-account>"
 
-# Get resource scopes (replace with your values)
-$PROJECT_SCOPE = "/subscriptions/<sub-id>/resourceGroups/<rg>/providers/Microsoft.MachineLearningServices/workspaces/<project>"
-$STORAGE_SCOPE = "/subscriptions/<sub-id>/resourceGroups/<rg>/providers/Microsoft.Storage/storageAccounts/<storage>"
-$SEARCH_SCOPE = "/subscriptions/<sub-id>/resourceGroups/<rg>/providers/Microsoft.Search/searchServices/<search>"
+# Scopes — the Foundry account uses Microsoft.CognitiveServices (NOT ML workspaces)
+$ACCOUNT_SCOPE = "/subscriptions/$SUB/resourceGroups/$RG/providers/Microsoft.CognitiveServices/accounts/$ACCOUNT"
+$STORAGE_SCOPE = "/subscriptions/$SUB/resourceGroups/$RG/providers/Microsoft.Storage/storageAccounts/$STORAGE"
+$SEARCH_SCOPE  = "/subscriptions/$SUB/resourceGroups/$RG/providers/Microsoft.Search/searchServices/$SEARCH"
 
-# ═══════════════════════════════════════════════════════════════
-# USER ROLES
-# ═══════════════════════════════════════════════════════════════
+# Identities
+$USER_ID    = az ad signed-in-user show --query id -o tsv
+$PROJECT_MI = az rest --method get --url "https://management.azure.com$ACCOUNT_SCOPE/projects/$PROJECT?api-version=2025-04-01-preview" --query identity.principalId -o tsv
+$SEARCH_MI  = az search service show -n $SEARCH -g $RG --query identity.principalId -o tsv
 
-# Core roles (required for all notebooks)
-az role assignment create --role "Azure AI Developer" --assignee $USER_PRINCIPAL_ID --scope $PROJECT_SCOPE
-az role assignment create --role "Cognitive Services OpenAI User" --assignee $USER_PRINCIPAL_ID --scope $PROJECT_SCOPE
+# Foundry User role ID (use the GUID — the role was renamed from "Azure AI User")
+$FOUNDRY_USER = "53ca6127-db72-4b80-b1b0-d745d6d5456d"
 
-# Storage roles (for file search notebooks)
-az role assignment create --role "Storage Blob Data Contributor" --assignee $USER_PRINCIPAL_ID --scope $STORAGE_SCOPE
+# ── YOU (user) ──
+az role assignment create --role $FOUNDRY_USER --assignee-object-id $USER_ID --assignee-principal-type User --scope $ACCOUNT_SCOPE
+az role assignment create --role "Cognitive Services OpenAI User" --assignee-object-id $USER_ID --assignee-principal-type User --scope $ACCOUNT_SCOPE
+az role assignment create --role "Storage Blob Data Contributor" --assignee-object-id $USER_ID --assignee-principal-type User --scope $STORAGE_SCOPE
+az role assignment create --role "Search Index Data Contributor" --assignee-object-id $USER_ID --assignee-principal-type User --scope $SEARCH_SCOPE
+az role assignment create --role "Search Index Data Reader" --assignee-object-id $USER_ID --assignee-principal-type User --scope $SEARCH_SCOPE
+az role assignment create --role "Search Service Contributor" --assignee-object-id $USER_ID --assignee-principal-type User --scope $SEARCH_SCOPE
 
-# Search roles (for AI Search notebooks)
-az role assignment create --role "Search Index Data Contributor" --assignee $USER_PRINCIPAL_ID --scope $SEARCH_SCOPE
-az role assignment create --role "Search Index Data Reader" --assignee $USER_PRINCIPAL_ID --scope $SEARCH_SCOPE
-az role assignment create --role "Search Service Contributor" --assignee $USER_PRINCIPAL_ID --scope $SEARCH_SCOPE
+# ── PROJECT managed identity (⚠️ SDK/CLI-created projects don't get Foundry User automatically) ──
+az role assignment create --role $FOUNDRY_USER --assignee-object-id $PROJECT_MI --assignee-principal-type ServicePrincipal --scope $ACCOUNT_SCOPE
+az role assignment create --role "Cognitive Services OpenAI User" --assignee-object-id $PROJECT_MI --assignee-principal-type ServicePrincipal --scope $ACCOUNT_SCOPE
+az role assignment create --role "Cognitive Services User" --assignee-object-id $PROJECT_MI --assignee-principal-type ServicePrincipal --scope $ACCOUNT_SCOPE
+az role assignment create --role "Storage Blob Data Contributor" --assignee-object-id $PROJECT_MI --assignee-principal-type ServicePrincipal --scope $STORAGE_SCOPE
+az role assignment create --role "Search Index Data Reader" --assignee-object-id $PROJECT_MI --assignee-principal-type ServicePrincipal --scope $SEARCH_SCOPE
 
-# ═══════════════════════════════════════════════════════════════
-# MANAGED IDENTITY ROLES (⚠️ CRITICAL for Foundry IQ Agents)
-# ═══════════════════════════════════════════════════════════════
+# ── AI SEARCH managed identity (Foundry IQ — embeddings + reasoning model) ──
+az role assignment create --role "Cognitive Services OpenAI User" --assignee-object-id $SEARCH_MI --assignee-principal-type ServicePrincipal --scope $ACCOUNT_SCOPE
+az role assignment create --role "Cognitive Services User" --assignee-object-id $SEARCH_MI --assignee-principal-type ServicePrincipal --scope $ACCOUNT_SCOPE
 
-# Get Project Managed Identity from Azure Portal:
-# AI Foundry Project → Settings → Identity → Object (principal) ID
-$PROJECT_MI_ID = "<PROJECT_MANAGED_IDENTITY_PRINCIPAL_ID>"
-
-az role assignment create --role "Search Index Data Reader" --assignee $PROJECT_MI_ID --scope $SEARCH_SCOPE
+# ── Storage networking — let the managed Foundry services reach the account (RBAC still enforced) ──
+az storage account update -n $STORAGE -g $RG --public-network-access Enabled
 ```
 
 > **⚠️ Critical Notes:**
-> - **Managed Identity Role**: The `Search Index Data Reader` on the Project Managed Identity is **required** for `8-foundry-IQ-agents.ipynb` - without it, the MCP tool cannot query the knowledge base at runtime.
-> - **Role Propagation**: Role assignments can take **5-10 minutes** to propagate. If you encounter permission errors, wait and retry.
-> - **Storage Networking**: If you encounter a `403 Forbidden` error with file search, configure the storage account networking to allow access.  
+> - **`Foundry User` on the project MI is the #1 gotcha.** Projects created via SDK/CLI don't get it automatically, which causes `ProjectMIUnauthorized` in the evaluation notebooks (2–4) and 401s in Foundry IQ (8). The setup script assigns it for you.
+> - **`Cognitive Services User` on the AI Search MI** is required for the Foundry IQ reasoning model (notebook 8) — the narrower `Cognitive Services OpenAI User` alone is **not** enough for agentic retrieval.
+> - **Storage networking:** evaluations (2–4) and agent file search (6) need the managed services to reach the project storage. If it's private-only you'll see `AuthorizationFailure` 403s — enable public network access (RBAC still applies) or use private endpoints reachable by Foundry.
+> - **Redis (notebook `threads/2`):** start a local Redis first — `docker run -d --name redis-workshop -p 6379:6379 redis:7-alpine`.
+> - **Azure Developer CLI (`azd`)** is needed for the hosted-agent deploy walkthrough (notebook 10, `hosted-agents/`, `AgentOps/`) — [install azd](https://learn.microsoft.com/azure/developer/azure-developer-cli/install-azd).
+> - **Role propagation:** Entra data-plane assignments take **5–15 minutes**. If a notebook returns 401/403 right after setup, wait and retry.
+
+---
+
+### Step 7: Verify your setup ✅
+
+```powershell
+python -c "from dotenv import load_dotenv; load_dotenv(); import os; from azure.identity import DefaultAzureCredential; from azure.ai.projects import AIProjectClient; AIProjectClient(endpoint=os.environ['AI_FOUNDRY_PROJECT_ENDPOINT'], credential=DefaultAzureCredential()); print('✅ Connected to Foundry')"
+```
+
+Then open `azure-ai-agents/1-basics.ipynb` and run the first cell — clean output means you're ready. A `401/403` means roles are still propagating; wait 5–10 min and retry.
 
 ---
 
@@ -260,7 +332,12 @@ Follow this structured learning path to master Microsoft Foundry and AI Agents:
 | 7 | [MCP Tools](azure-ai-agents/7-mcp-tools.ipynb) | Model Context Protocol integration |
 | 8 | [🧠 Foundry IQ Agents](azure-ai-agents/8-foundry-IQ-agents.ipynb) | **Revolutionary agentic retrieval** - Knowledge-grounded agents |
 | 9 | [Agent Memory Search](azure-ai-agents/9-agent-memory-search.ipynb) | Persistent memory patterns |
-| 10 | [🏦 Hosted Agent + Skills](azure-ai-agents/10-hosted-agent-with-skills.ipynb) | Skills REST API + hosted agent deployment (FSI) |
+| 10 | [🏦 Hosted Agent + Skills](azure-ai-agents/10-hosted-agent-with-skills.ipynb) | Skills (`beta.skills` SDK) + hosted-agent deploy walkthrough (FSI) |
+| 11 | [🔁 Routines](azure-ai-agents/11-routines.ipynb) | Schedule an agent to run on a cron (preview) |
+| 12 | [🧠 Agent Memory](azure-ai-agents/12-agent-memory.ipynb) | Memory stores — long-term memory across sessions (preview) |
+| 13 | [🔀 Model Router](azure-ai-agents/13-model-router.ipynb) | Cost-optimized routing across model deployments |
+| 14 | [🤝 Agent-to-Agent (A2A)](azure-ai-agents/14-agent-to-agent-a2a.ipynb) | Expose & call agents over the A2A protocol (preview) |
+| 15 | [🔌 Managed MCP Connectors](azure-ai-agents/15-managed-mcp-connectors.ipynb) | Connect agents to managed MCP servers (preview) |
 
 ### 🤖⚙️ Phase 2: Microsoft Agent Framework
 **Location:** `agent-framework/`
@@ -355,11 +432,43 @@ Comprehensive evaluation, observability, and security testing for AI agents.
 
 📖 [Complete Guide](observability-and-evaluations/README.md)
 
+### 🚀 Phase 4: Hosted Agents (Deployment)
+**Location:** `hosted-agents/`
+
+Two production-ready hosted-agent projects (FSI: employee benefits) demonstrating the two Foundry hosting protocols. Each is self-contained — `README.md`, `Dockerfile`, `requirements.txt`, and a `test_local.py` you can run against your Foundry project **before** deploying.
+
+| Project | Protocol | What it shows |
+|---------|----------|---------------|
+| [benefits-review-invocations](hosted-agents/benefits-review-invocations/) | Invocations | Structured request → response agent on `InvocationsHostServer` |
+| [benefits-advisor-responses](hosted-agents/benefits-advisor-responses/) | Responses | `ResponsesHostServer` + Foundry Toolbox (web search + code interpreter) + Skills |
+
+```powershell
+# Smoke-test either agent locally (no deploy needed — uses your Foundry project)
+cd hosted-agents/benefits-review-invocations
+python test_local.py
+```
+
+📖 [Hosting protocol comparison + deploy steps](hosted-agents/README.md)
+
+### 🔧 Phase 5: AgentOps (GitOps for Agents)
+**Location:** `AgentOps/`
+
+A reference CI/CD pipeline for shipping a Foundry hosted agent the GitOps way — agent + prompts + toolbox-as-code, Bicep infrastructure, per-environment parameters, and unit/integration/smoke tests wired into GitHub Actions (validate → build-deploy → rollback).
+
+```powershell
+# Run the test suite locally
+cd AgentOps
+pip install -r requirements.txt
+python -m pytest tests/unit tests/integration -q
+```
+
+📖 [Architecture + pipeline guide](AgentOps/README.md)
+
 ---
 
 ## 💼 Industry Use Cases
 
-For 49 real-world FSI use cases (banking, insurance, investment) mapped to each notebook, see [💼 USE-CASES.md](USE-CASES.md).
+For 57 real-world FSI use cases (banking, insurance, investment) mapped to each notebook, see [💼 USE-CASES.md](USE-CASES.md).
 
 ---
 

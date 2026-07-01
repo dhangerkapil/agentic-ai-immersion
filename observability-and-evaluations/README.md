@@ -1,5 +1,7 @@
 # 📊 Observability and Evaluations with Microsoft Foundry
 
+[← Back to main README](../README.md)
+
 Practical notebooks for implementing **telemetry**, **tracing**, and **AI agent evaluations** using Microsoft Foundry — all with **real-world business** use cases.
 
 ## Table of Contents
@@ -28,7 +30,7 @@ All notebooks feature **business use cases** including advisory services, approv
 
 | Requirement | Details |
 |-------------|---------|
-| **Python** | 3.10 or later |
+| **Python** | 3.12+ (use the repo-root venv) |
 | **Azure Subscription** | Access to Microsoft Foundry |
 | **Azure CLI** | 2.60+ with active `az login` session |
 | **Azure OpenAI** | Deployed model (gpt-4o recommended) |
@@ -36,7 +38,7 @@ All notebooks feature **business use cases** including advisory services, approv
 
 ## Environment Setup
 
-1. **Create `.env` file** in the parent directory with:
+1. **Use the repo-root `.env`** (these notebooks read it automatically — no separate file needed). Key values:
 
    ```bash
    # Microsoft Foundry Project
@@ -45,9 +47,9 @@ All notebooks feature **business use cases** including advisory services, approv
    AZURE_AI_MODEL_DEPLOYMENT_NAME=gpt-4o
 
    # Azure OpenAI (for local evaluations)
-   AZURE_OPENAI_ENDPOINT=https://your-openai-resource.openai.azure.com/
-   AZURE_OPENAI_API_KEY=your_api_key
-   AZURE_OPENAI_DEPLOYMENT=your_deployment_name
+   AZURE_OPENAI_ENDPOINT=https://<account>.openai.azure.com/openai/v1
+   AZURE_OPENAI_API_KEY=          # leave BLANK — Entra ID (az login), not keys
+   AZURE_OPENAI_DEPLOYMENT=gpt-4o
    ```
 
 2. **Install packages**:
@@ -214,7 +216,8 @@ red_team = RedTeam(
     risk_categories=[RiskCategory.VIOLENCE],
     target=AzureOpenAIModelConfiguration(model_deployment_name="gpt-4o"),
 )
-red_team_response = project_client.red_teams.create(red_team=red_team, headers={...})
+# Red teaming lives under the preview surface: AIProjectClient(..., allow_preview=True)
+red_team_response = project_client.beta.red_teams.create(red_team=red_team, headers={...})
 ```
 
 **Why it matters:** Proactively identifies security vulnerabilities before deployment, preventing data breaches and compliance violations.
@@ -278,11 +281,12 @@ Telemetry → Basic Evaluation → Tool Evaluation → Tool Accuracy → Red Tea
 
 | Issue | Solution |
 |-------|----------|
+| **401 / 403 (Unauthorized / ProjectMIUnauthorized)** | Role propagation — RBAC takes **5–15 min** after [setup-permissions](../README.md#step-6-required-azure-rbac-roles--storage-access). Wait and re-run. |
 | **Authentication failures** | Re-run `az login --use-device-code` |
 | **Trace IDs showing as zeros** | Use `telemetry.get_application_insights_connection_string()` |
-| **Missing environment variables** | Verify `.env` file in parent directory |
+| **Missing environment variables** | Verify the **repo-root** `.env` (parent directory) is filled in |
 | **Evaluation stuck in "queued"** | Check model deployment quota and availability |
-| **Package import errors** | Run `pip install azure-ai-projects>=2.0.0b1` |
+| **Package import errors** | Use the repo-root venv: `pip install -r ../requirements.txt` |
 | **Tool call accuracy errors** | With `strict=True`, ALL properties must be in `required` array |
 
 ---
