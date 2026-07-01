@@ -119,11 +119,12 @@ agentic-ai-immersion-day/
 |------|-----------|
 | **Microsoft Foundry** | Azure's platform for building, deploying, and managing AI agents |
 | **Agent** | An AI that uses tools (code, search, APIs) to complete tasks |
+| **Agent Framework** | Microsoft's open-source SDK for building agents and orchestrating multi-agent workflows |
 | **Foundry IQ** | Knowledge Bases — agentic retrieval where the agent decides what to search |
 | **MCP** | Model Context Protocol — a standard for connecting agents to external tools |
 | **Hosted Agent** | An agent packaged as a container and run/scaled by Foundry |
+| **AgentOps** | GitOps delivery for agents — version-controlled prompts/tools/config with automated deploy, promote, and rollback |
 | **Managed Identity** | An Azure-managed credential (no API keys) used by services |
-| **FSI** | Financial Services Industry — the example domain throughout |
 
 ## �🚀 Getting Started
 
