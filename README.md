@@ -139,7 +139,7 @@ For a consistent, pre-configured environment with all dependencies:
    - Wait for the container to build (first time takes ~5 minutes)
 
 3. **Ready to go!** All dependencies are pre-installed including:
-   - Python 3.12 with all packages (frozen versions)
+   - Python 3.14 with all packages (pinned versions)
    - Azure CLI and Azure Developer CLI (azd)
    - Jupyter notebooks support
    - GitHub Copilot extensions
@@ -156,7 +156,7 @@ git clone https://github.com/dhangerkapil/agentic-ai-immersion-day.git
 cd agentic-ai-immersion-day
 
 # Verify Python version
-python --version  # Python 3.12+ required
+python --version  # Python 3.12+ (3.14 recommended — matches the pinned lock & Dev Container)
 ```
 
 #### Step 2: Environment Setup

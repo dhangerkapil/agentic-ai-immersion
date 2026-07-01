@@ -71,7 +71,7 @@ subId=$(az account show --query id -o tsv)
 region="eastus"
 az rest --method get \
   --url "https://management.azure.com/subscriptions/$subId/providers/Microsoft.CognitiveServices/locations/$region/usages?api-version=2023-05-01" \
-  --query "value[?name.value=='OpenAI.Standard.gpt-4o'].{Model:name.value, Used:currentValue, Limit:limit, Available:(limit-currentValue)}" -o table
+  --query "value[?name.value=='OpenAI.Standard.gpt-5.4'].{Model:name.value, Used:currentValue, Limit:limit, Available:(limit-currentValue)}" -o table
 ```
 
 See [workflows reference](./references/workflows.md#multi-region-check) for multi-region comparison.
@@ -85,7 +85,7 @@ Verify available quota for your target model:
 ```bash
 subId=$(az account show --query id -o tsv)
 region="eastus"
-model="OpenAI.Standard.gpt-4o"
+model="OpenAI.Standard.gpt-5.4"
 
 az rest --method get \
   --url "https://management.azure.com/subscriptions/$subId/providers/Microsoft.CognitiveServices/locations/$region/usages?api-version=2023-05-01" \

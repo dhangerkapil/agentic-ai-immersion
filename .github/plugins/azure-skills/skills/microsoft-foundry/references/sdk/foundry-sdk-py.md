@@ -14,11 +14,11 @@ pip install azure-ai-projects azure-identity azure-ai-inference openai azure-ai-
 
 ```bash
 PROJECT_ENDPOINT=https://<resource>.services.ai.azure.com/api/projects/<project>
-MODEL_DEPLOYMENT_NAME=gpt-4o
+MODEL_DEPLOYMENT_NAME=gpt-5.4
 AZURE_AI_SEARCH_CONNECTION_NAME=my-search-connection
 AI_SEARCH_INDEX_NAME=my-index
 AZURE_OPENAI_ENDPOINT=https://<resource>.openai.azure.com
-AZURE_OPENAI_DEPLOYMENT=gpt-4o
+AZURE_OPENAI_DEPLOYMENT=gpt-5.4
 ```
 
 ## Model Discovery and Deployment (MCP)
@@ -29,8 +29,8 @@ foundry_models_list(publisher="OpenAI")             # Filter by publisher
 foundry_models_list(search_for_free_playground=True) # Free playground models
 
 foundry_models_deploy(
-    resource_group="my-rg", deployment="gpt-4o-deployment",
-    model_name="gpt-4o", model_format="OpenAI",
+    resource_group="my-rg", deployment="gpt-5.4-deployment",
+    model_name="gpt-5.4", model_format="OpenAI",
     azure_ai_services="my-foundry-resource",
     model_version="2024-05-13", sku_capacity=10, scale_type="Standard"
 )
@@ -181,7 +181,7 @@ foundry_agents_query_and_evaluate(
     agent_id="<agent-id>", query="What's the weather?",
     endpoint="https://my-foundry.services.ai.azure.com/api/projects/my-project",
     azure_openai_endpoint="https://my-openai.openai.azure.com",
-    azure_openai_deployment="gpt-4o",
+    azure_openai_deployment="gpt-5.4",
     evaluators="intent_resolution,task_adherence,tool_call_accuracy"
 )
 
@@ -189,7 +189,7 @@ foundry_agents_evaluate(
     query="What's the weather?", response="Sunny and 22°C.",
     evaluator="intent_resolution",
     azure_openai_endpoint="https://my-openai.openai.azure.com",
-    azure_openai_deployment="gpt-4o"
+    azure_openai_deployment="gpt-5.4"
 )
 ```
 

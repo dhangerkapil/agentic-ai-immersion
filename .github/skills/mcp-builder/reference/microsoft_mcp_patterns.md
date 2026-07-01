@@ -624,7 +624,7 @@ mcp_tool = MCPTool(
 agent = project_client.agents.create_version(
     agent_name="storage-agent",
     definition=PromptAgentDefinition(
-        model="gpt-4o-mini",
+        model="gpt-5.4-mini",
         instructions="Help users manage Azure Storage",
         tools=[mcp_tool]
     )
@@ -634,7 +634,7 @@ agent = project_client.agents.create_version(
 ### MCP Tool Declaration (C#)
 
 ```csharp
-PromptAgentDefinition agentDefinition = new(model: "gpt-4o-mini")
+PromptAgentDefinition agentDefinition = new(model: "gpt-5.4-mini")
 {
     Instructions = "Help users manage Azure Storage",
     Tools = { 

@@ -29,7 +29,7 @@ for deployment in project_client.deployments.list(model_publisher="OpenAI"):
 
 ```python
 # List deployments of a specific model
-for deployment in project_client.deployments.list(model_name="gpt-4o"):
+for deployment in project_client.deployments.list(model_name="gpt-5.4"):
     print(f"{deployment.name}: {deployment.model_version}")
 ```
 
@@ -52,11 +52,11 @@ if isinstance(deployment, ModelDeployment):
 ## Deployment Properties
 
 ```python
-deployment = project_client.deployments.get("gpt-4o-mini")
+deployment = project_client.deployments.get("gpt-5.4-mini")
 
 # Available properties
 print(f"Name: {deployment.name}")           # Deployment name
-print(f"Model: {deployment.model_name}")    # e.g., "gpt-4o-mini"
+print(f"Model: {deployment.model_name}")    # e.g., "gpt-5.4-mini"
 print(f"Version: {deployment.model_version}")  # e.g., "2024-07-18"
 print(f"Publisher: {deployment.model_publisher}")  # e.g., "OpenAI"
 print(f"Type: {deployment.type}")           # Deployment type
@@ -102,7 +102,7 @@ if deployment.capabilities:
 
 ```bash
 # Store deployment name in environment
-AZURE_AI_MODEL_DEPLOYMENT_NAME=gpt-4o-mini
+AZURE_AI_MODEL_DEPLOYMENT_NAME=gpt-5.4-mini
 ```
 
 ```python

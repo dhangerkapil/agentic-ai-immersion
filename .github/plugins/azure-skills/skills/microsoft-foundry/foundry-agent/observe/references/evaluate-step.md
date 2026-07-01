@@ -29,7 +29,7 @@ Use **`evaluation_agent_batch_eval_create`** to run the selected evaluation suit
 
 ## Resolve Judge Deployment
 
-Before setting `deploymentName`, use **`model_deployment_get`** to list the selected project's actual model deployments. Choose a deployment that supports chat completions and use that deployment name for quality evaluators. Do **not** assume `gpt-4o` exists. If the project has no chat-completions-capable deployment, stop and tell the user quality evaluators cannot run until one is available.
+Before setting `deploymentName`, use **`model_deployment_get`** to list the selected project's actual model deployments. Choose a deployment that supports chat completions and use that deployment name for quality evaluators. Do **not** assume `gpt-5.4` exists. If the project has no chat-completions-capable deployment, stop and tell the user quality evaluators cannot run until one is available.
 
 ### Additional Parameters
 

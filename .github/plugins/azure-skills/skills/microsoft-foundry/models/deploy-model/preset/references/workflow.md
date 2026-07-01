@@ -105,7 +105,7 @@ Extract unavailable regions:
 UNAVAILABLE_REGIONS=$(echo "$ALL_REGIONS_JSON" | jq -r '.value[] | select(.properties.skuName=="GlobalStandard" and (.properties.availableCapacity == 0 or .properties.availableCapacity == null)) | "\(.location)|0"')
 ```
 
-If no regions have capacity, defer to the [quota skill](../../../../quota/quota.md) for increase requests. Suggest checking existing deployments or trying alternative models like `gpt-4o-mini`.
+If no regions have capacity, defer to the [quota skill](../../../../quota/quota.md) for increase requests. Suggest checking existing deployments or trying alternative models like `gpt-5.4-mini`.
 
 ---
 

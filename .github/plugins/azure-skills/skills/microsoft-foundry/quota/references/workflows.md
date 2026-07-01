@@ -64,11 +64,11 @@ foundry_models_deployments_list(
 # Get subscription ID
 subId=$(az account show --query id -o tsv)
 
-# Check quota for GPT-4o Standard in a specific region
+# Check quota for GPT-5.4 Standard in a specific region
 region="eastus"  # Change to your target region
 az rest --method get \
   --url "https://management.azure.com/subscriptions/$subId/providers/Microsoft.CognitiveServices/locations/$region/usages?api-version=2023-05-01" \
-  --query "value[?name.value=='OpenAI.Standard.gpt-4o'].{Model:name.value, Used:currentValue, Limit:limit, Available:(limit-currentValue)}" \
+  --query "value[?name.value=='OpenAI.Standard.gpt-5.4'].{Model:name.value, Used:currentValue, Limit:limit, Available:(limit-currentValue)}" \
   -o table
 ```
 

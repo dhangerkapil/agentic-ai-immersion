@@ -271,7 +271,7 @@ if [ -z "$AVAILABLE_REGIONS" ]; then
   echo "     --resource-group $RESOURCE_GROUP"
   echo ""
   echo "3. Consider alternative models with lower capacity requirements:"
-  echo "   • gpt-4o-mini (cost-effective, lower capacity requirements)"
+  echo "   • gpt-5.4-mini (cost-effective, lower capacity requirements)"
   echo "   List available models: az cognitiveservices account list-models --name \$PROJECT_NAME --resource-group \$RESOURCE_GROUP --output table"
   exit 1
 fi
@@ -370,7 +370,7 @@ RESOURCE_GROUP="$NEW_RESOURCE_GROUP"
 
 **Generate unique deployment name:**
 
-The deployment name should match the model name (e.g., "gpt-4o"), but if a deployment with that name already exists, append a numeric suffix (e.g., "gpt-4o-2", "gpt-4o-3"). This follows the same UX pattern as Azure AI Foundry portal.
+The deployment name should match the model name (e.g., "gpt-5.4"), but if a deployment with that name already exists, append a numeric suffix (e.g., "gpt-5.4-2", "gpt-5.4-3"). This follows the same UX pattern as Azure AI Foundry portal.
 
 Use the `generate_deployment_name` script to check existing deployments and generate a unique name:
 

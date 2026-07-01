@@ -23,9 +23,9 @@ Finds available Azure OpenAI model capacity across all accessible regions and pr
 
 ## When to Use This Skill
 
-- ✅ User asks "where can I deploy gpt-4o?"
-- ✅ User specifies a capacity target: "find a region with 10K TPM for gpt-4o"
-- ✅ User wants to compare availability: "which regions have gpt-4o available?"
+- ✅ User asks "where can I deploy gpt-5.4?"
+- ✅ User specifies a capacity target: "find a region with 10K TPM for gpt-5.4"
+- ✅ User wants to compare availability: "which regions have gpt-5.4 available?"
 - ✅ User got a quota error and needs to find an alternative location
 - ✅ User asks "best region and project for deploying model X"
 

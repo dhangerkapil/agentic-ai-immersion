@@ -87,7 +87,7 @@ AgentDefinition (base)
 from azure.ai.projects.models import PromptAgentDefinition
 
 definition = PromptAgentDefinition(
-    model="gpt-4o-mini",                           # Required
+    model="gpt-5.4-mini",                           # Required
     instructions="You are helpful.",               # Optional
     name="my-agent",                               # Optional
     description="Agent description",               # Optional
@@ -106,7 +106,7 @@ definition = PromptAgentDefinition(
 from azure.ai.projects.models import HostedAgentDefinition
 
 definition = HostedAgentDefinition(
-    model="gpt-4o-mini",
+    model="gpt-5.4-mini",
     instructions="You are helpful.",
     protocol_version="2025-05-01",  # Hosted agent protocol version
 )

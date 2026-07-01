@@ -161,7 +161,7 @@ openai_client = project_client.get_openai_client(
 )
 
 response = openai_client.chat.completions.create(
-    model="gpt-4o",
+    model="gpt-5.4",
     messages=[{"role": "user", "content": "Hello!"}],
 )
 ```

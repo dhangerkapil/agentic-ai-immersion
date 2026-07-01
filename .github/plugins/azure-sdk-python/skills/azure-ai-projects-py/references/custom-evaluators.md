@@ -365,7 +365,7 @@ testing_criteria = [
         "name": "coherence",
         "evaluator_name": "builtin.coherence",
         "data_mapping": {"query": "{{item.query}}", "response": "{{item.response}}"},
-        "initialization_parameters": {"deployment_name": "gpt-4o-mini"}
+        "initialization_parameters": {"deployment_name": "gpt-5.4-mini"}
     },
     # Custom code-based evaluator
     {
@@ -379,7 +379,7 @@ testing_criteria = [
         "type": "azure_ai_evaluator",
         "name": "helpfulness",
         "evaluator_name": "helpfulness_evaluator",
-        "initialization_parameters": {"deployment_name": "gpt-4o-mini"},
+        "initialization_parameters": {"deployment_name": "gpt-5.4-mini"},
         "data_mapping": {"query": "{{item.query}}", "response": "{{item.response}}"}
     },
 ]

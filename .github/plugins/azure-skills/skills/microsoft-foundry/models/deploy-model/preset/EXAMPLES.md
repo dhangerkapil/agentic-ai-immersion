@@ -2,7 +2,7 @@
 
 ## Example 1: Fast Path — Current Region Has Capacity
 
-**Scenario:** Deploy gpt-4o to project in East US, which has capacity.
+**Scenario:** Deploy gpt-5.4 to project in East US, which has capacity.
 **Result:** Deployed in ~45s. No region selection needed. 100K TPM default, GlobalStandard SKU.
 
 ## Example 2: Alternative Region — No Capacity in Current Region
@@ -12,7 +12,7 @@
 
 ## Example 3: Create New Project in Optimal Region
 
-**Scenario:** Deploy gpt-4o-mini in Europe for data residency; no existing European project.
+**Scenario:** Deploy gpt-5.4-mini in Europe for data residency; no existing European project.
 **Result:** Created AI Services hub + project in Sweden Central → deployed in ~4 min with 150K TPM.
 
 ## Example 4: Insufficient Quota Everywhere
@@ -21,11 +21,11 @@
 **Result:** Graceful failure with actionable guidance:
 1. Request quota increase via the [quota skill](../../../quota/quota.md)
 2. List existing deployments consuming quota
-3. Suggest alternative models (gpt-4o, gpt-4o-mini)
+3. Suggest alternative models (gpt-5.4, gpt-5.4-mini)
 
 ## Example 5: First-Time User — No Project
 
-**Scenario:** Deploy gpt-4o with no existing AI Foundry project.
+**Scenario:** Deploy gpt-5.4 with no existing AI Foundry project.
 **Result:** Full onboarding in ~5 min — created resource group, AI Services hub, project, then deployed.
 
 ## Example 6: Deployment Name Conflict
@@ -35,7 +35,7 @@
 
 ## Example 7: Multi-Version Model Selection
 
-**Scenario:** Deploy "latest gpt-4o" when multiple versions exist.
+**Scenario:** Deploy "latest gpt-5.4" when multiple versions exist.
 **Result:** Latest stable version auto-selected. Capacity aggregated across versions.
 
 ## Example 8: Anthropic Model (claude-sonnet-4-6)

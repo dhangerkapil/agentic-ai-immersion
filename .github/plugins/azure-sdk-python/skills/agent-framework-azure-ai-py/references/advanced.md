@@ -312,7 +312,7 @@ from agent_framework.azure import AzureAIAgentsProvider
 provider = AzureAIAgentsProvider(
     credential=credential,
     project_endpoint="https://my-project.services.ai.azure.com/api/projects/my-project-id",
-    model_deployment_name="gpt-4o",  # Override default model
+    model_deployment_name="gpt-5.4",  # Override default model
 )
 ```
 

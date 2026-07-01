@@ -60,7 +60,7 @@ When Phase 2 is needed:
 
 ### 5. Identify LLM-Judge Deployment
 
-Use **`model_deployment_get`** to list the selected project's actual model deployments, then choose one that supports chat completions for quality evaluators. Do **not** assume `gpt-4o` exists in the project. If no deployment supports chat completions, stop the setup flow and explain that quality evaluators need a compatible judge deployment.
+Use **`model_deployment_get`** to list the selected project's actual model deployments, then choose one that supports chat completions for quality evaluators. Do **not** assume `gpt-5.4` exists in the project. If no deployment supports chat completions, stop the setup flow and explain that quality evaluators need a compatible judge deployment.
 
 ### 6. Generate Local Test Dataset
 

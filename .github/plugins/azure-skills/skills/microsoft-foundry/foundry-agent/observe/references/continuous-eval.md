@@ -58,7 +58,7 @@ The user does not need to choose between these — the tool handles it based on 
 7. **Surface the remediation path.** When presenting continuous eval results that show score degradation, always offer to route into the [observe skill](../observe.md) for diagnosis and optimization. Monitoring without action is incomplete.
 8. **Handle agent-not-found.** If `agent_get` returns a not-found error, stop the continuous eval flow. Offer to route to the [deploy skill](../../deploy/deploy.md) to create the agent first, or ask the user to verify the agent name and environment.
 9. **Handle auth and endpoint errors.** If `agent_get` or `continuous_eval_create` returns a permission or authentication error, verify the project endpoint, environment, and user access. Do not suggest creating the agent — the issue is access, not existence.
-10. **Validate `deploymentName` before enabling.** Do not assume `gpt-4o` exists. If quality evaluators are selected, verify a chat-capable deployment is available in the project. If none exists, stop and explain that quality evaluators cannot be enabled until a compatible deployment is provisioned.
+10. **Validate `deploymentName` before enabling.** Do not assume `gpt-5.4` exists. If quality evaluators are selected, verify a chat-capable deployment is available in the project. If none exists, stop and explain that quality evaluators cannot be enabled until a compatible deployment is provisioned.
 11. **Handle invalid evaluator names.** If `continuous_eval_create` returns an invalid evaluator name error, call `evaluator_catalog_get` to list available evaluators and present valid options. Do not retry with the same arguments.
 12. **Handle unexpected empty config.** If `continuous_eval_get` returns an empty list for an agent the user believes has continuous eval configured, verify the agent name and project endpoint match the intended environment in `.foundry/agent-metadata.yaml`. The configuration may exist under a different environment or resolved `agentName`.
 
@@ -84,7 +84,7 @@ Arguments:
 
 **Replace Semantics**: `continuous_eval_create` always creates a new evaluation group with the provided evaluators and points the evaluation rule at it. Always pass the complete desired configuration on every call — omitted evaluators are dropped, not preserved.
 
-> ⚠️ **Do not assume `gpt-4o` exists.** Before setting `deploymentName`, verify a chat-capable deployment is available in the project. If none exists, quality evaluators cannot be enabled — only safety evaluators (which do not require a deployment) will work.
+> ⚠️ **Do not assume `gpt-5.4` exists.** Before setting `deploymentName`, verify a chat-capable deployment is available in the project. If none exists, quality evaluators cannot be enabled — only safety evaluators (which do not require a deployment) will work.
 
 ```yaml
 Tool: continuous_eval_create
@@ -92,7 +92,7 @@ Arguments:
   projectEndpoint: <project endpoint>
   agentName: <agent name>
   evaluatorNames: ["groundedness", "coherence", "fluency"]  # Illustrative — align with your batch eval evaluators
-  deploymentName: "gpt-4o"          # Required for quality evaluators
+  deploymentName: "gpt-5.4"          # Required for quality evaluators
   enabled: true                      # Set false to disable without deleting
 ```
 
@@ -139,7 +139,7 @@ Arguments:
   projectEndpoint: <project endpoint>
   agentName: <agent name>
   evaluatorNames: ["groundedness", "coherence", "fluency"]  # Must match current config
-  deploymentName: "gpt-4o"
+  deploymentName: "gpt-5.4"
   enabled: false
 ```
 

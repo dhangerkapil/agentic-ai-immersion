@@ -10,7 +10,7 @@ Environment variables required:
     AOAI_ENDPOINT: Azure OpenAI endpoint
     AOAI_EMBEDDING_MODEL: Embedding model name (default: text-embedding-3-large)
     AOAI_EMBEDDING_DEPLOYMENT: Embedding deployment name
-    AOAI_GPT_MODEL: GPT model name (default: gpt-4o-mini)
+    AOAI_GPT_MODEL: GPT model name (default: gpt-5.4-mini)
     AOAI_GPT_DEPLOYMENT: GPT deployment name
 """
 
@@ -132,7 +132,7 @@ def main():
     aoai_endpoint = os.environ["AOAI_ENDPOINT"]
     embedding_model = os.environ.get("AOAI_EMBEDDING_MODEL", "text-embedding-3-large")
     embedding_deployment = os.environ.get("AOAI_EMBEDDING_DEPLOYMENT", embedding_model)
-    gpt_model = os.environ.get("AOAI_GPT_MODEL", "gpt-4o-mini")
+    gpt_model = os.environ.get("AOAI_GPT_MODEL", "gpt-5.4-mini")
     gpt_deployment = os.environ.get("AOAI_GPT_DEPLOYMENT", gpt_model)
 
     ks_name = args.ks_name or f"{args.index_name}-source"

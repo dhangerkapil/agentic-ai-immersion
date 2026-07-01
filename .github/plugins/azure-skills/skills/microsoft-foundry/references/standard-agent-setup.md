@@ -42,7 +42,7 @@ Before starting deployment, confirm the following with the user:
 
 After infrastructure provisioning succeeds:
 
-1. **Deploy a model** to the new AI Services account (e.g., `gpt-4o`). If `GlobalStandard` SKU quota is exhausted, fall back to `Standard` SKU.
+1. **Deploy a model** to the new AI Services account (e.g., `gpt-5.4`). If `GlobalStandard` SKU quota is exhausted, fall back to `Standard` SKU.
 2. **Create the agent** using MCP tools (`agent_update`) or the Python SDK (`client.agents.create_version`). See [SDK Operations](../foundry-agent/create/references/sdk-operations.md) for details.
 
 ## References

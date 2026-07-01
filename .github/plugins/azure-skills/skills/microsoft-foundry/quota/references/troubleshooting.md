@@ -49,7 +49,7 @@ Available quota less than requested capacity.
    region="eastus"
    az rest --method get \
      --url "https://management.azure.com/subscriptions/$subId/providers/Microsoft.CognitiveServices/locations/$region/usages?api-version=2023-05-01" \
-     --query "value[?name.value=='OpenAI.Standard.gpt-4o'].{Model:name.value, Used:currentValue, Limit:limit, Available:(limit-currentValue)}" -o table
+     --query "value[?name.value=='OpenAI.Standard.gpt-5.4'].{Model:name.value, Used:currentValue, Limit:limit, Available:(limit-currentValue)}" -o table
    ```
 
 2. **Options:**
@@ -155,7 +155,7 @@ PTU not available for specific model or region combination.
 ### For Standard TPM Quota
 
 1. Navigate to Azure Portal → Your Foundry resource → **Quotas**
-2. Identify model needing increase (e.g., "GPT-4o Standard")
+2. Identify model needing increase (e.g., "GPT-5.4 Standard")
 3. Click **Request quota increase**
 4. Fill form:
    - Model name

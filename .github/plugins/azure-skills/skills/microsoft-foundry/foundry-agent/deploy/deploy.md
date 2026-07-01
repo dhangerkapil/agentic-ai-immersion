@@ -110,7 +110,7 @@ docker push <acr-name>.azurecr.io/<repository>:<tag>
 
 Use the project endpoint and ACR name from the project context. Ask the user only for values not already resolved:
 - **Agent name** — Unique name for the agent
-- **Model deployment** — Model deployment name (e.g., `gpt-4o`)
+- **Model deployment** — Model deployment name (e.g., `gpt-5.4`)
 
 ### Step 5: Get Agent Definition Schema
 
@@ -174,7 +174,7 @@ Follow [After Deployment — Auto-Create Evaluators & Dataset](#after-deployment
 
 Use the project endpoint from the project context (see Common: Project Context Resolution). Ask the user only for values not already resolved:
 - **Agent name** — Unique name for the agent
-- **Model deployment** — Model deployment name (e.g., `gpt-4o`)
+- **Model deployment** — Model deployment name (e.g., `gpt-5.4`)
 - **Instructions** — System prompt (optional)
 - **Temperature** — Response randomness 0-2 (optional, default varies by model)
 - **Tools** — Tool configurations (optional)
@@ -271,7 +271,7 @@ If Phase 2 is needed, call `evaluator_catalog_get` again to reuse an existing cu
 
 ### 4. Identify LLM-Judge Deployment
 
-Use **`model_deployment_get`** to list the selected project's actual model deployments, then choose one that supports chat completions for quality evaluators. Do **not** assume `gpt-4o` exists in the project. If no deployment supports chat completions, stop the auto-setup flow and tell the user quality evaluators cannot run until a compatible judge deployment is available.
+Use **`model_deployment_get`** to list the selected project's actual model deployments, then choose one that supports chat completions for quality evaluators. Do **not** assume `gpt-5.4` exists in the project. If no deployment supports chat completions, stop the auto-setup flow and tell the user quality evaluators cannot run until a compatible judge deployment is available.
 
 ### 5. Generate Seed Dataset
 
@@ -322,7 +322,7 @@ Each evaluation suite should bundle one dataset with the evaluator list, thresho
 | Property | Type | Required | Description |
 |----------|------|----------|-------------|
 | `kind` | string | ✅ | Must be `"prompt"` |
-| `model` | string | ✅ | Model deployment name (e.g., `gpt-4o`) |
+| `model` | string | ✅ | Model deployment name (e.g., `gpt-5.4`) |
 | `instructions` | string | | System message for the model |
 | `temperature` | number | | Response randomness (0-2) |
 | `top_p` | number | | Nucleus sampling (0-1) |

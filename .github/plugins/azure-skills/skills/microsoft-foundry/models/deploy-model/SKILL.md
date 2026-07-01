@@ -27,7 +27,7 @@ Analyze the user's prompt and route to the correct mode:
 User Prompt
     │
     ├─ Simple deployment (no modifiers)
-    │  "deploy gpt-4o", "set up a model"
+    │  "deploy gpt-5.4", "set up a model"
     │  └─> PRESET mode
     │
     ├─ Customization keywords present
@@ -43,7 +43,7 @@ User Prompt
     │  └─> CAPACITY DISCOVERY mode
     │
     └─ Ambiguous (has capacity target + deploy intent)
-       "deploy gpt-4o with 10K capacity to best region"
+       "deploy gpt-5.4 with 10K capacity to best region"
        └─> CAPACITY DISCOVERY first → then PRESET or CUSTOMIZE
 ```
 
@@ -124,7 +124,7 @@ Before presenting any deployment options (SKU, capacity), always validate both o
    ```bash
    az cognitiveservices usage list --location <region> --subscription <sub-id> -o json
    ```
-   Match by usage name pattern `OpenAI.<SKU>.<model-name>` (e.g., `OpenAI.GlobalStandard.gpt-4o`). Compute `available = limit - currentValue`.
+   Match by usage name pattern `OpenAI.<SKU>.<model-name>` (e.g., `OpenAI.GlobalStandard.gpt-5.4`). Compute `available = limit - currentValue`.
 
 > ⚠️ **Warning:** Only present options that pass both checks. Do NOT show hardcoded SKU lists — always query dynamically. SKUs with 0 available quota should be shown as ❌ informational items, not selectable options.
 

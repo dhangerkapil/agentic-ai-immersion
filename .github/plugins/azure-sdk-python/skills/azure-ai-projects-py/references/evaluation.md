@@ -10,7 +10,7 @@ from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 
 endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
-deployment = os.environ.get("AZURE_AI_MODEL_DEPLOYMENT_NAME", "gpt-4o-mini")
+deployment = os.environ.get("AZURE_AI_MODEL_DEPLOYMENT_NAME", "gpt-5.4-mini")
 
 with (
     DefaultAzureCredential() as credential,

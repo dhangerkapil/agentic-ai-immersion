@@ -104,8 +104,8 @@ knowledge_base = KnowledgeBase(
     models=[KnowledgeBaseAzureOpenAIModel(
         azure_open_ai_parameters=AzureOpenAIVectorizerParameters(
             resource_url=aoai_endpoint,
-            deployment_name="gpt-4o-mini",
-            model_name="gpt-4o-mini"
+            deployment_name="gpt-5.4-mini",
+            model_name="gpt-5.4-mini"
         )
     )],
     knowledge_sources=[KnowledgeSourceReference(name="my-knowledge-source")],

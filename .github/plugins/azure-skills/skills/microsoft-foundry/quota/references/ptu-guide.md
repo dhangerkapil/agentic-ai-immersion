@@ -66,7 +66,7 @@ curl -X POST "https://management.azure.com/subscriptions/<subscription-id>/provi
   -d '{
     "model": {
       "format": "OpenAI",
-      "name": "gpt-4o",
+      "name": "gpt-5.4",
       "version": "2024-05-13"
     },
     "workload": {
@@ -90,8 +90,8 @@ Use the official capacity calculator methods above to determine required PTU cap
 az cognitiveservices account deployment create \
   --name <resource-name> \
   --resource-group <rg> \
-  --deployment-name gpt-4o-ptu-deployment \
-  --model-name gpt-4o \
+  --deployment-name gpt-5.4-ptu-deployment \
+  --model-name gpt-5.4 \
   --model-version "2024-05-13" \
   --model-format OpenAI \
   --sku-name ProvisionedManaged \
@@ -101,7 +101,7 @@ az cognitiveservices account deployment create \
 az cognitiveservices account deployment show \
   --name <resource-name> \
   --resource-group <rg> \
-  --deployment-name gpt-4o-ptu-deployment
+  --deployment-name gpt-5.4-ptu-deployment
 ```
 
 **Key Differences from Standard TPM:**
@@ -116,7 +116,7 @@ PTU quota is separate from TPM quota and requires specific justification:
 
 1. Navigate to Azure Portal → Foundry resource → **Quotas**
 2. Select **Provisioned throughput unit** tab
-3. Identify model needing PTU increase (e.g., "GPT-4o PTU")
+3. Identify model needing PTU increase (e.g., "GPT-5.4 PTU")
 4. Click **Request quota increase**
 5. Fill form:
    - Model name
@@ -134,7 +134,7 @@ PTU quota is separate from TPM quota and requires specific justification:
 
 ### Region Quota
 - Maximum PTU capacity available in an Azure region
-- Varies by model type (GPT-4, GPT-4o, etc.)
+- Varies by model type (GPT-4, GPT-5.4, etc.)
 - Shared across subscription resources in same region
 - Separate from TPM quota (you have both TPM and PTU quotas)
 

@@ -51,7 +51,7 @@ testing_criteria = [
             "response": "{{item.response}}"
         },
         "initialization_parameters": {
-            "deployment_name": "gpt-4o-mini"   # Required for LLM-based evaluators
+            "deployment_name": "gpt-5.4-mini"   # Required for LLM-based evaluators
         }
     }
 ]
@@ -69,7 +69,7 @@ Measures logical flow and consistency of the response.
     "name": "coherence",
     "evaluator_name": "builtin.coherence",
     "data_mapping": {"query": "{{item.query}}", "response": "{{item.response}}"},
-    "initialization_parameters": {"deployment_name": "gpt-4o-mini"}
+    "initialization_parameters": {"deployment_name": "gpt-5.4-mini"}
 }
 ```
 
@@ -86,7 +86,7 @@ Measures grammatical correctness and natural language quality.
     "name": "fluency",
     "evaluator_name": "builtin.fluency",
     "data_mapping": {"query": "{{item.query}}", "response": "{{item.response}}"},
-    "initialization_parameters": {"deployment_name": "gpt-4o-mini"}
+    "initialization_parameters": {"deployment_name": "gpt-5.4-mini"}
 }
 ```
 
@@ -107,7 +107,7 @@ Measures how well the response addresses the query given context.
         "response": "{{item.response}}",
         "context": "{{item.context}}"
     },
-    "initialization_parameters": {"deployment_name": "gpt-4o-mini"}
+    "initialization_parameters": {"deployment_name": "gpt-5.4-mini"}
 }
 ```
 
@@ -128,7 +128,7 @@ Measures whether the response is factually grounded in the provided context.
         "response": "{{item.response}}",
         "context": "{{item.context}}"
     },
-    "initialization_parameters": {"deployment_name": "gpt-4o-mini"}
+    "initialization_parameters": {"deployment_name": "gpt-5.4-mini"}
 }
 ```
 
@@ -145,7 +145,7 @@ Measures whether the response fully addresses all aspects of the query.
     "name": "response_completeness",
     "evaluator_name": "builtin.response_completeness",
     "data_mapping": {"query": "{{item.query}}", "response": "{{item.response}}"},
-    "initialization_parameters": {"deployment_name": "gpt-4o-mini"}
+    "initialization_parameters": {"deployment_name": "gpt-5.4-mini"}
 }
 ```
 
@@ -225,7 +225,7 @@ Evaluates whether the agent follows its system instructions.
     "name": "task_adherence",
     "evaluator_name": "builtin.task_adherence",
     "data_mapping": {"query": "{{item.query}}", "response": "{{sample.output_items}}"},
-    "initialization_parameters": {"deployment_name": "gpt-4o-mini"}
+    "initialization_parameters": {"deployment_name": "gpt-5.4-mini"}
 }
 ```
 
@@ -241,7 +241,7 @@ Evaluates whether the agent correctly understood user intent.
     "name": "intent_resolution",
     "evaluator_name": "builtin.intent_resolution",
     "data_mapping": {"query": "{{item.query}}", "response": "{{sample.output_text}}"},
-    "initialization_parameters": {"deployment_name": "gpt-4o-mini"}
+    "initialization_parameters": {"deployment_name": "gpt-5.4-mini"}
 }
 ```
 
@@ -255,7 +255,7 @@ Evaluates whether the agent completed the task end-to-end.
     "name": "task_completion",
     "evaluator_name": "builtin.task_completion",
     "data_mapping": {"query": "{{item.query}}", "response": "{{sample.output_items}}"},
-    "initialization_parameters": {"deployment_name": "gpt-4o-mini"}
+    "initialization_parameters": {"deployment_name": "gpt-5.4-mini"}
 }
 ```
 
@@ -269,7 +269,7 @@ Evaluates whether tool calls are correct (selection + parameters).
     "name": "tool_call_accuracy",
     "evaluator_name": "builtin.tool_call_accuracy",
     "data_mapping": {"query": "{{item.query}}", "response": "{{sample.output_items}}"},
-    "initialization_parameters": {"deployment_name": "gpt-4o-mini"}
+    "initialization_parameters": {"deployment_name": "gpt-5.4-mini"}
 }
 ```
 
@@ -296,7 +296,7 @@ Evaluates whether the correct tools were selected.
     "name": "tool_selection",
     "evaluator_name": "builtin.tool_selection",
     "data_mapping": {"query": "{{item.query}}", "response": "{{sample.output_items}}"},
-    "initialization_parameters": {"deployment_name": "gpt-4o-mini"}
+    "initialization_parameters": {"deployment_name": "gpt-5.4-mini"}
 }
 ```
 
@@ -359,7 +359,7 @@ Semantic similarity between response and ground truth.
         "response": "{{item.response}}",
         "ground_truth": "{{item.ground_truth}}"
     },
-    "initialization_parameters": {"deployment_name": "gpt-4o-mini"}
+    "initialization_parameters": {"deployment_name": "gpt-5.4-mini"}
 }
 ```
 

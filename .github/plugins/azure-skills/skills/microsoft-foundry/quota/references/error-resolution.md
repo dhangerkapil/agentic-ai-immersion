@@ -9,7 +9,7 @@
 subId=$(az account show --query id -o tsv)
 for region in eastus westus eastus2 westus2 swedencentral uksouth; do
   az rest --method get --url "https://management.azure.com/subscriptions/$subId/providers/Microsoft.CognitiveServices/locations/$region/usages?api-version=2023-05-01" \
-    --query "value[?name.value=='OpenAI.Standard.gpt-4o'].{Model:name.value, Used:currentValue, Limit:limit, Available:(limit-currentValue)}" -o table &
+    --query "value[?name.value=='OpenAI.Standard.gpt-5.4'].{Model:name.value, Used:currentValue, Limit:limit, Available:(limit-currentValue)}" -o table &
 done; wait
 ```
 
@@ -43,8 +43,8 @@ az cognitiveservices account deployment update --name <resource> --resource-grou
 
 **C. Load Balance**
 ```bash
-az cognitiveservices account deployment create --name <resource> --resource-group <rg> --deployment-name gpt-4o-2 \
-  --model-name gpt-4o --model-version "2024-05-13" --model-format OpenAI --sku-name Standard --sku-capacity 100
+az cognitiveservices account deployment create --name <resource> --resource-group <rg> --deployment-name gpt-5.4-2 \
+  --model-name gpt-5.4 --model-version "2024-05-13" --model-format OpenAI --sku-name Standard --sku-capacity 100
 ```
 
 **D. Migrate to PTU** - No rate limits
@@ -94,8 +94,8 @@ az rest --method get --url "https://management.azure.com/subscriptions/$subId/pr
 
 **A. Reduce Capacity**
 ```bash
-az cognitiveservices account deployment create --name <resource> --resource-group <rg> --deployment-name gpt-4o \
-  --model-name gpt-4o --model-version "2024-05-13" --model-format OpenAI --sku-name Standard --sku-capacity 20
+az cognitiveservices account deployment create --name <resource> --resource-group <rg> --deployment-name gpt-5.4 \
+  --model-name gpt-5.4 --model-version "2024-05-13" --model-format OpenAI --sku-name Standard --sku-capacity 20
 ```
 
 **B. Delete Unused Deployments**
@@ -131,8 +131,8 @@ az cognitiveservices account deployment delete --name <resource> --resource-grou
 
 **B. Different Region**
 ```bash
-az cognitiveservices account deployment create --name <resource> --resource-group <rg> --deployment-name gpt-4o \
-  --model-name gpt-4o --model-version "2024-05-13" --model-format OpenAI --sku-name Standard --sku-capacity 50
+az cognitiveservices account deployment create --name <resource> --resource-group <rg> --deployment-name gpt-5.4 \
+  --model-name gpt-5.4 --model-version "2024-05-13" --model-format OpenAI --sku-name Standard --sku-capacity 50
 ```
 
 **C. Request Increase (3-5 days)**

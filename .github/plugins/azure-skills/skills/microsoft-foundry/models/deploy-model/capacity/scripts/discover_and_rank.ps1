@@ -3,7 +3,7 @@
     Discovers available capacity for an Azure OpenAI model across all regions,
     cross-references with existing projects and subscription quota, and outputs a ranked table.
 .PARAMETER ModelName
-    The model name (e.g., "gpt-4o", "o3-mini")
+    The model name (e.g., "gpt-5.4", "o3-mini")
 .PARAMETER ModelVersion
     The model version (e.g., "2025-01-31")
 .PARAMETER MinCapacity

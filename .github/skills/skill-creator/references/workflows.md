@@ -101,7 +101,7 @@ poller.add_done_callback(lambda r: print(f"Done: {r}"))
 
 \`\`\`python
 # 1. Create
-agent = client.create_agent(model="gpt-4o", instructions="...")
+agent = client.create_agent(model="gpt-5.4", instructions="...")
 
 # 2-4. Thread, Message, Run
 thread = client.threads.create()

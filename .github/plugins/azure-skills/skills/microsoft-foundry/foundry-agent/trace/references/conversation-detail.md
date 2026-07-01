@@ -39,11 +39,11 @@ Use `spanId` and `parentSpanId` to reconstruct the hierarchy:
 
 ```
 invoke_agent (root) ─── 4200ms
-├── chat (LLM call #1) ─── 1800ms, gpt-4o, 450→120 tokens
+├── chat (LLM call #1) ─── 1800ms, gpt-5.4, 450→120 tokens
 │   └── [output: "Let me check the weather..."]
 ├── execute_tool (get_weather) [tool: remote_functions.weather_api] ─── 200ms
 │   └── [result: "rainy, 57°F"]
-├── chat (LLM call #2) ─── 1500ms, gpt-4o, 620→85 tokens
+├── chat (LLM call #2) ─── 1500ms, gpt-5.4, 620→85 tokens
 │   └── [output: "The weather in Paris is rainy, 57°F"]
 └── [total: 450+620=1070 input, 120+85=205 output tokens]
 ```

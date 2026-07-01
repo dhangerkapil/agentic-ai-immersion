@@ -13,7 +13,7 @@ Usage:
 
 Environment Variables:
     AZURE_AI_PROJECT_ENDPOINT     - Azure AI project endpoint (required)
-    AZURE_AI_MODEL_DEPLOYMENT_NAME - Model deployment name (default: gpt-4o-mini)
+    AZURE_AI_MODEL_DEPLOYMENT_NAME - Model deployment name (default: gpt-5.4-mini)
 """
 
 import argparse
@@ -343,7 +343,7 @@ def main():
         print("Error: AZURE_AI_PROJECT_ENDPOINT environment variable required")
         sys.exit(1)
 
-    deployment = args.deployment or os.environ.get("AZURE_AI_MODEL_DEPLOYMENT_NAME", "gpt-4o-mini")
+    deployment = args.deployment or os.environ.get("AZURE_AI_MODEL_DEPLOYMENT_NAME", "gpt-5.4-mini")
 
     # Validate data file
     data_path = Path(args.data)

@@ -9,7 +9,7 @@ Use **`prompt_optimize`** with:
 | Parameter | Required | Description |
 |-----------|----------|-------------|
 | `developerMessage` | ✅ | Agent's current system prompt / instructions |
-| `deploymentName` | ✅ | Model for optimization (e.g., `gpt-4o-mini`) |
+| `deploymentName` | ✅ | Model for optimization (e.g., `gpt-5.4-mini`) |
 | `projectEndpoint` or `foundryAccountResourceId` | ✅ | At least one required |
 | `requestedChanges` | | Concise improvement suggestions from cluster analysis |
 

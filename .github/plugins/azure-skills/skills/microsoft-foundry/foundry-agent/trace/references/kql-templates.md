@@ -25,8 +25,8 @@ Stored in `customDimensions` on `dependencies` spans:
 | `gen_ai.response.id` | Response ID | `chatcmpl-123` |
 | `gen_ai.agent.name` | Agent name | `my-support-agent` |
 | `gen_ai.agent.id` | Agent identifier | `asst_abc123` |
-| `gen_ai.request.model` | Requested model | `gpt-4o` |
-| `gen_ai.response.model` | Actual model used | `gpt-4o-2024-05-13` |
+| `gen_ai.request.model` | Requested model | `gpt-5.4` |
+| `gen_ai.response.model` | Actual model used | `gpt-5.4-2024-05-13` |
 | `gen_ai.usage.input_tokens` | Input token count | `450` |
 | `gen_ai.usage.output_tokens` | Output token count | `120` |
 | `gen_ai.response.finish_reasons` | Stop reasons | `["stop"]`, `["tool_calls"]` |
