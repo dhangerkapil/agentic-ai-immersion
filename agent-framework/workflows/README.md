@@ -30,7 +30,7 @@ This folder contains examples demonstrating workflow orchestration patterns with
 2. **Environment Variables** (in root `.env` file):
    ```
    AZURE_OPENAI_ENDPOINT=your-openai-endpoint
-   AZURE_OPENAI_CHAT_DEPLOYMENT_NAME=gpt-4o
+   AZURE_OPENAI_CHAT_DEPLOYMENT_NAME=gpt-5.4
    AI_FOUNDRY_PROJECT_ENDPOINT=your-project-endpoint
    ```
 

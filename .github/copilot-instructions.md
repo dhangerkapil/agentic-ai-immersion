@@ -50,7 +50,7 @@ agents_client = project_client.agents  # access agents via project client
 
 All config is in `.env` at the repo root. Key variables:
 - `AI_FOUNDRY_PROJECT_ENDPOINT` — Foundry project endpoint
-- `AZURE_AI_MODEL_DEPLOYMENT_NAME` — Model deployment (gpt-4o)
+- `AZURE_AI_MODEL_DEPLOYMENT_NAME` — Model deployment (gpt-5.4)
 - `AZURE_AI_SEARCH_ENDPOINT` / `AZURE_SEARCH_INDEX_NAME` — AI Search config
 - `FOUNDRY_MCP_CONNECTION_ID` — MCP server connection
 
@@ -219,7 +219,7 @@ client = AIProjectClient(
 
 ```bash
 AI_FOUNDRY_PROJECT_ENDPOINT=https://<resource>.services.ai.azure.com/api/projects/<project>
-AZURE_AI_MODEL_DEPLOYMENT_NAME=gpt-4o
+AZURE_AI_MODEL_DEPLOYMENT_NAME=gpt-5.4
 ```
 
 ---

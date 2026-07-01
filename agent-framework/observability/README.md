@@ -24,7 +24,7 @@ This folder contains examples demonstrating observability and tracing patterns w
 2. **Environment Variables** (in root `.env` file):
    ```
    AI_FOUNDRY_PROJECT_ENDPOINT=your-project-endpoint
-   AZURE_AI_MODEL_DEPLOYMENT_NAME=gpt-4o
+   AZURE_AI_MODEL_DEPLOYMENT_NAME=gpt-5.4
    ```
 
 3. **Application Insights** (optional but recommended):

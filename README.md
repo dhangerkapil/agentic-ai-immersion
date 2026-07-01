@@ -182,7 +182,7 @@ az account show    # confirm the right subscription is active
 #### Step 4: Create your Foundry project & deploy models
 
 1. **Create a Foundry resource** — [ai.azure.com](https://ai.azure.com) → **Create project** (creates the account + a project + default storage); pick a region like East US 2.
-2. **Deploy models** — project → **Models + endpoints** → **Deploy** each of `gpt-4o`, `gpt-4o-mini`, `text-embedding-3-large` (status “Succeeded” after a few minutes).
+2. **Deploy models** — project → **Models + endpoints** → **Deploy** each of `gpt-5.4`, `gpt-5.4-mini`, `text-embedding-3-large` (status “Succeeded” after a few minutes).
 3. **Connect services** — add Azure AI Search + Application Insights connections (project → **Connections**) for the search/observability notebooks.
 
 For detailed setup, see [Microsoft Foundry Documentation](https://learn.microsoft.com/en-us/azure/ai-foundry/).
@@ -195,12 +195,12 @@ For detailed setup, see [Microsoft Foundry Documentation](https://learn.microsof
 ```env
 # Microsoft Foundry project (azure-ai-agents/ + observability notebooks)
 AI_FOUNDRY_PROJECT_ENDPOINT=https://<your-foundry>.services.ai.azure.com/api/projects/<your-project>
-AZURE_AI_MODEL_DEPLOYMENT_NAME=gpt-4o
+AZURE_AI_MODEL_DEPLOYMENT_NAME=gpt-5.4
 EMBEDDING_MODEL_DEPLOYMENT_NAME=text-embedding-3-large
 
 # Agent Framework Foundry client convention (agent-framework/ notebooks)
 FOUNDRY_PROJECT_ENDPOINT=https://<your-foundry>.services.ai.azure.com/api/projects/<your-project>
-FOUNDRY_MODEL=gpt-4o
+FOUNDRY_MODEL=gpt-5.4
 
 # Azure OpenAI v1 surface (agent-framework workflows / middleware / threads)
 AZURE_OPENAI_ENDPOINT=https://<your-foundry>.openai.azure.com/openai/v1

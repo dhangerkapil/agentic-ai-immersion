@@ -32,7 +32,7 @@ All notebooks are in the `azure-ai-agents/` folder:
 2. **Environment Variables** (in root `.env` file):
    ```
    AI_FOUNDRY_PROJECT_ENDPOINT=your-project-endpoint
-   AZURE_AI_MODEL_DEPLOYMENT_NAME=gpt-4o
+   AZURE_AI_MODEL_DEPLOYMENT_NAME=gpt-5.4
    ```
 
 3. **For Web Search** (optional):

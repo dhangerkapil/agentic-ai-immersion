@@ -28,7 +28,7 @@ single, generic FSI scenario — **employee benefits**. You supply the agent cod
 
 ## Prerequisites
 
-- A **Microsoft Foundry project** with a deployed chat model (e.g. `gpt-4.1-mini` or `gpt-4o`).
+- A **Microsoft Foundry project** with a deployed chat model (e.g. `gpt-4.1-mini` or `gpt-5.4`).
 - **Azure CLI** signed in: `az login`.
 - **Python 3.12+** locally; the Foundry **hosted** runtime must be **Python 3.14**.
 - **Entra (AAD) auth** — these agents use `DefaultAzureCredential` (no API keys). Locally you need

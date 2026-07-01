@@ -33,7 +33,7 @@ All notebooks feature **business use cases** including advisory services, approv
 | **Python** | 3.12+ (use the repo-root venv) |
 | **Azure Subscription** | Access to Microsoft Foundry |
 | **Azure CLI** | 2.60+ with active `az login` session |
-| **Azure OpenAI** | Deployed model (gpt-4o recommended) |
+| **Azure OpenAI** | Deployed model (gpt-5.4 recommended) |
 | **Optional** | Application Insights for telemetry |
 
 ## Environment Setup
@@ -44,12 +44,12 @@ All notebooks feature **business use cases** including advisory services, approv
    # Microsoft Foundry Project
    AI_FOUNDRY_PROJECT_ENDPOINT=https://<account>.services.ai.azure.com/api/projects/<project>
    TENANT_ID=your-tenant-id
-   AZURE_AI_MODEL_DEPLOYMENT_NAME=gpt-4o
+   AZURE_AI_MODEL_DEPLOYMENT_NAME=gpt-5.4
 
    # Azure OpenAI (for local evaluations)
    AZURE_OPENAI_ENDPOINT=https://<account>.openai.azure.com/openai/v1
    AZURE_OPENAI_API_KEY=          # leave BLANK — Entra ID (az login), not keys
-   AZURE_OPENAI_DEPLOYMENT=gpt-4o
+   AZURE_OPENAI_DEPLOYMENT=gpt-5.4
    ```
 
 2. **Install packages**:
@@ -214,7 +214,7 @@ from azure.ai.projects.models import RedTeam, AttackStrategy, RiskCategory
 red_team = RedTeam(
     attack_strategies=[AttackStrategy.BASE64],
     risk_categories=[RiskCategory.VIOLENCE],
-    target=AzureOpenAIModelConfiguration(model_deployment_name="gpt-4o"),
+    target=AzureOpenAIModelConfiguration(model_deployment_name="gpt-5.4"),
 )
 # Red teaming lives under the preview surface: AIProjectClient(..., allow_preview=True)
 red_team_response = project_client.beta.red_teams.create(red_team=red_team, headers={...})

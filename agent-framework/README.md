@@ -41,7 +41,7 @@ All notebooks feature **business use cases** including application processing, c
 2. **Configure environment variables** — the notebooks read `.env` from the **repository root** (one level up). Copy `../.env.example` to `../.env` and fill in your Azure resources — no per-folder `.env` is needed:
    - `AI_FOUNDRY_PROJECT_ENDPOINT` — Your Microsoft Foundry project endpoint
    - `AZURE_OPENAI_ENDPOINT` — Your Azure OpenAI endpoint
-   - `AZURE_OPENAI_CHAT_DEPLOYMENT_NAME` — Model deployment name (e.g., gpt-4o)
+   - `AZURE_OPENAI_CHAT_DEPLOYMENT_NAME` — Model deployment name (e.g., gpt-5.4)
    - Additional variables as needed: `AZURE_AI_SEARCH_ENDPOINT`, Redis connection strings
    - **Leave `AZURE_OPENAI_API_KEY` blank** — these notebooks use Entra ID (`az login`), not keys
 

@@ -25,7 +25,7 @@ This folder contains examples demonstrating thread management patterns with Azur
    ```
    AI_FOUNDRY_PROJECT_ENDPOINT=your-project-endpoint
    AZURE_OPENAI_ENDPOINT=your-openai-endpoint
-   AZURE_AI_MODEL_DEPLOYMENT_NAME=gpt-4o
+   AZURE_AI_MODEL_DEPLOYMENT_NAME=gpt-5.4
    ```
 
 3. **For Redis notebook (2)**: Redis server running on localhost:6379
