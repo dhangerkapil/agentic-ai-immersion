@@ -32,12 +32,12 @@ This comprehensive workshop transforms you from an AI enthusiast into a Microsof
 | Module | Topics | Technology |
 |--------|--------|------------|
 | **Foundation** | Setup, Authentication, Quick Start | Azure AI Foundry, Azure AI Agents v2 |
-| **Core AI** | Prompting, Embeddings, RAG | Azure OpenAI, Azure AI Search |
 | **Agents** | File Search, Web Search, Azure Functions, Multi-Agent | Code Interpreter, WebSearchTool, Multi-Agent Workflows |
 | **Foundry IQ** | Revolutionary agentic retrieval with knowledge bases | Foundry IQ, Knowledge Bases |
 | **Advanced** | MCP Integration, Red Teaming, Agent Framework | Foundry MCP Server, Microsoft Agent Framework |
 | **Operations** | Observability, Evaluation, Fine-Tuning | OpenTelemetry, Azure Monitor, Built-in Evaluators |
-| **Deployment** | Hosted Agents with Azure Developer CLI | Azure Developer CLI (azd), Hosted Agents |
+| **Hosted Agents** | Deploy agents as managed containers (Invocations + Responses protocols) | Azure Developer CLI (azd), Foundry Hosted Agents |
+| **AgentOps** | GitOps CI/CD for agents — build, deploy, promote, rollback | GitHub Actions, Bicep, pytest |
 | **Enterprise** | Responsible AI | Red Team Testing, Content Safety |
 
 > **🎓 Format**: Intensive hands-on experience  
