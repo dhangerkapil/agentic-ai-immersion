@@ -15,7 +15,7 @@ SYSTEM_PROMPT = """You are a helpful assistant."""
 
 config = load_config(
     default_instructions=SYSTEM_PROMPT,
-    default_model=os.getenv("MODEL_DEPLOYMENT_NAME", "gpt-4.1"),
+    default_model=os.getenv("MODEL_DEPLOYMENT_NAME", "gpt-5.4"),
     default_skills_dir="skills",
 )
 ```
@@ -24,7 +24,7 @@ Then map the resolved values into the existing framework:
 
 ```python
 instructions = config.compose_instructions()
-model = config.model or os.getenv("MODEL_DEPLOYMENT_NAME", "gpt-4.1")
+model = config.model or os.getenv("MODEL_DEPLOYMENT_NAME", "gpt-5.4")
 ```
 
 Only apply temperature if the framework supports it:
@@ -42,13 +42,13 @@ When a Python app has multiple agents, use names that match the architecture rat
 ```python
 orchestrator_config = load_config(
     default_instructions=ORCHESTRATOR_PROMPT,
-    default_model=os.getenv("ORCHESTRATOR_MODEL_DEPLOYMENT_NAME", os.getenv("MODEL_DEPLOYMENT_NAME", "gpt-4.1")),
+    default_model=os.getenv("ORCHESTRATOR_MODEL_DEPLOYMENT_NAME", os.getenv("MODEL_DEPLOYMENT_NAME", "gpt-5.4")),
     default_skills_dir="skills/orchestrator",
 )
 
 tool_agent_config = load_config(
     default_instructions=TOOL_AGENT_PROMPT,
-    default_model=os.getenv("TOOL_AGENT_MODEL_DEPLOYMENT_NAME", os.getenv("MODEL_DEPLOYMENT_NAME", "gpt-4.1")),
+    default_model=os.getenv("TOOL_AGENT_MODEL_DEPLOYMENT_NAME", os.getenv("MODEL_DEPLOYMENT_NAME", "gpt-5.4")),
     default_skills_dir="skills/tool-agent",
 )
 ```
@@ -73,7 +73,7 @@ For model selection:
 ```python
 client = FoundryChatClient(
     project_endpoint=project_endpoint,
-    model=config.model or os.getenv("MODEL_DEPLOYMENT_NAME", "gpt-4.1"),
+    model=config.model or os.getenv("MODEL_DEPLOYMENT_NAME", "gpt-5.4"),
     credential=credential,
 )
 ```
@@ -86,7 +86,7 @@ Keep the existing HTTP contract. Use config values where the model call is creat
 
 ```python
 instructions = body.get("instructions", config.compose_instructions())
-model = body.get("model", config.model or os.getenv("MODEL_DEPLOYMENT_NAME", "gpt-4.1"))
+model = body.get("model", config.model or os.getenv("MODEL_DEPLOYMENT_NAME", "gpt-5.4"))
 ```
 
 When the app already supports request-level overrides, preserve them and use FAOS config as the default.

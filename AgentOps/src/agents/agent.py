@@ -71,7 +71,7 @@ class _ToolboxAuth(httpx.Auth):
 def build_agent() -> Agent:
     """Build the agent from versioned prompts/config, optionally attaching the Toolbox."""
     cfg = load_config()
-    model = os.environ.get("AZURE_AI_MODEL_DEPLOYMENT_NAME") or cfg.get("model", "gpt-4.1-mini")
+    model = os.environ.get("AZURE_AI_MODEL_DEPLOYMENT_NAME") or cfg.get("model", "gpt-5.4-mini")
     credential = DefaultAzureCredential()
 
     tools = None

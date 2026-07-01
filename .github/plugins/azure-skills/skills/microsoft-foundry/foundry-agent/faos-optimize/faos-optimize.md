@@ -147,7 +147,7 @@ import os
 from agent_optimization import load_config
 
 SYSTEM_PROMPT = """...existing default instructions..."""
-EXISTING_MODEL_FALLBACK = os.getenv("<existing-model-env-var>", "gpt-4.1")
+EXISTING_MODEL_FALLBACK = os.getenv("<existing-model-env-var>", "gpt-5.4")
 
 config = load_config(
     default_instructions=SYSTEM_PROMPT,

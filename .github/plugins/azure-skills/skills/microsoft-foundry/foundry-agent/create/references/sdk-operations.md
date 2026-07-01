@@ -38,7 +38,7 @@ client = AIProjectClient(endpoint=endpoint, credential=DefaultAzureCredential())
 | Variable | Description |
 |----------|-------------|
 | `PROJECT_ENDPOINT` | Foundry project endpoint (`https://<resource>.services.ai.azure.com/api/projects/<project>`) |
-| `MODEL_DEPLOYMENT_NAME` | Deployed model name (e.g., `gpt-4.1-mini`) |
+| `MODEL_DEPLOYMENT_NAME` | Deployed model name (e.g., `gpt-5.4-mini`) |
 
 ## References
 

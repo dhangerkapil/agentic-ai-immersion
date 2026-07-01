@@ -68,10 +68,10 @@ print(f"Capabilities: {deployment.capabilities}")  # Model capabilities
 ### Dynamic Model Selection
 
 ```python
-# Find available GPT-4 deployments
+# Find available GPT-5.4 deployments
 gpt4_deployments = [
     d for d in project_client.deployments.list()
-    if "gpt-4" in d.model_name.lower()
+    if "gpt-5.4" in d.model_name.lower()
 ]
 
 if gpt4_deployments:

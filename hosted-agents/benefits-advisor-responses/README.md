@@ -46,6 +46,6 @@ from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 c = AIProjectClient(endpoint="<project-endpoint>", credential=DefaultAzureCredential(), allow_preview=True)
 oai = c.get_openai_client(agent_name="benefits-advisor-responses")
-print(oai.responses.create(input="Benchmark dental coverage cost for 300 staff.", model="gpt-4.1-mini").output_text)
+print(oai.responses.create(input="Benchmark dental coverage cost for 300 staff.", model="gpt-5.4-mini").output_text)
 ```
 Tool questions (#1, #4) need a Toolbox: redeploy with `TOOLBOX_NAME` set; without it the agent still answers from reasoning + skills.

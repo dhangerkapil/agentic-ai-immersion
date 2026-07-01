@@ -40,7 +40,7 @@ parameters:
       description: Comma-separated list of Foundry skill names to embed at startup
 resources:
   - kind: model
-    id: gpt-4.1-mini
+    id: gpt-5.4-mini
     name: AZURE_AI_MODEL_DEPLOYMENT_NAME
   # FOUNDRY TOOLBOX: provides web_search and code_interpreter as MCP tools. The
   # model decides WHEN to call these tools based on the conversation — the key

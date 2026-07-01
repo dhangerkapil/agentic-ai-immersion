@@ -15,7 +15,7 @@ Comprehensive guide for planning Azure AI Foundry capacity, including cost analy
 - No upfront commitment
 - **Rates**: See [Azure OpenAI Pricing](https://azure.microsoft.com/en-us/pricing/details/cognitive-services/openai-service/)
   - GPT-4o: ~$0.0025-$0.01/1K tokens
-  - GPT-4 Turbo: ~$0.01-$0.03/1K
+  - GPT-5.4 Turbo: ~$0.01-$0.03/1K
   - GPT-3.5 Turbo: ~$0.0005-$0.0015/1K
 - **Best for**: Variable workloads, unpredictable traffic
 
@@ -56,7 +56,7 @@ Scenario: 1M requests/day, average 1,000 tokens per request
 
 ## Production Workload Examples
 
-To estimate quota requirements, use real-world production scenarios with capacity calculations for gpt-4, version 0613 (from Azure Foundry Portal calculator):
+To estimate quota requirements, use real-world production scenarios with capacity calculations for gpt-5.4, version 0613 (from Azure Foundry Portal calculator):
 
 | Workload Type | Calls/Min | Prompt Tokens | Response Tokens | Cache Hit % | Total Tokens/Min | PTU Required | TPM Equivalent |
 |---------------|-----------|---------------|-----------------|-------------|------------------|--------------|----------------|
@@ -101,8 +101,8 @@ For the combined workload (40 calls/min, 135K tokens/min total), use **200 PTU**
 
 | Model | Key Characteristics | Best For |
 |-------|---------------------|----------|
-| **GPT-4o** | Matches GPT-4 Turbo performance in English text/coding, superior in non-English and vision tasks. Cheaper and faster than GPT-4 Turbo. | Multimodal tasks, cost-effective general purpose, high-volume production workloads |
-| **GPT-4 Turbo** | Superior reasoning capabilities, larger context window (128K tokens) | Complex reasoning tasks, long-context analysis |
+| **GPT-4o** | Matches GPT-5.4 Turbo performance in English text/coding, superior in non-English and vision tasks. Cheaper and faster than GPT-5.4 Turbo. | Multimodal tasks, cost-effective general purpose, high-volume production workloads |
+| **GPT-5.4 Turbo** | Superior reasoning capabilities, larger context window (128K tokens) | Complex reasoning tasks, long-context analysis |
 | **GPT-3.5 Turbo** | Most cost-effective, optimized for chat and completions, fast response time | Simple tasks, customer service, high-volume low-cost scenarios |
 | **GPT-4o mini** | Fastest response time, low latency | Latency-sensitive applications requiring immediate responses |
 | **text-embedding-3-large** | Purpose-built for vector embeddings | RAG applications, semantic search, document similarity |

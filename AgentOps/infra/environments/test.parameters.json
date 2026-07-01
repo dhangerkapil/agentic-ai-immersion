@@ -3,7 +3,7 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "foundryAccountName": { "value": "<test-foundry-account>" },
-    "modelName": { "value": "gpt-4.1-mini" },
+    "modelName": { "value": "gpt-5.4-mini" },
     "modelVersion": { "value": "2025-04-14" },
     "capacity": { "value": 30 }
   }

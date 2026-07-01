@@ -145,7 +145,7 @@ subId=$(az account show --query id -o tsv)
 region="eastus"  # Change to your region
 az rest --method get \
   --url "https://management.azure.com/subscriptions/$subId/providers/Microsoft.CognitiveServices/locations/$region/usages?api-version=2023-05-01" \
-  --query "value[?contains(name.value,'gpt-4')].{Name:name.value, Used:currentValue, Limit:limit, Available:(limit-currentValue)}" \
+  --query "value[?contains(name.value,'gpt-5.4')].{Name:name.value, Used:currentValue, Limit:limit, Available:(limit-currentValue)}" \
   --output table
 
 # List all deployments with capacity
