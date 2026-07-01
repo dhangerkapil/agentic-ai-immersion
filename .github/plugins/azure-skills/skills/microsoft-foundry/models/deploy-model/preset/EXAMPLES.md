@@ -7,7 +7,7 @@
 
 ## Example 2: Alternative Region — No Capacity in Current Region
 
-**Scenario:** Deploy gpt-5.4-turbo to dev project in West US 2 (no capacity).
+**Scenario:** Deploy gpt-5.4 to dev project in West US 2 (no capacity).
 **Result:** Queried all regions → user selected East US 2 (120K available) → deployed in ~2 min.
 
 ## Example 3: Create New Project in Optimal Region
