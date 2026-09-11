@@ -42,6 +42,8 @@ python-dotenv>=1.0.0
 aiohttp>=3.9.0
 pydantic>=2.5.0
 requests>=2.31.0
+pywin32>=312; sys_platform == "win32"
+pywinpty>=3.0.5; sys_platform == "win32"
 
 # =============================================================================
 # Jupyter Notebooks
