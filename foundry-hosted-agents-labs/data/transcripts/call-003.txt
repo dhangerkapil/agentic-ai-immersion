@@ -1,0 +1,27 @@
+[00:00:02] Advisor: Thank you for calling Benefits Marketplace, this is Marcus. How can I help?
+[00:00:06] Participant: Hi Marcus, my name is Rosa Delgado. I have a couple of different questions and I am honestly not sure which department I need.
+[00:00:15] Advisor: That is what I am here for. Let's start with your participant ID and ZIP code so I can see your account.
+[00:00:21] Participant: P-1005, and the ZIP is 84010.
+[00:00:26] Advisor: Thank you, that matches. I see Davis County, Northwind Traders retiree program, and you are on the Tailspin Silver Balance plan through the individual marketplace. Go ahead with your questions.
+[00:00:39] Participant: First, the premium on that plan went up again for next year and I want to understand what else is out there. I am 63, so no Medicare yet.
+[00:00:50] Advisor: Right. Until Medicare, your options are the individual ACA plans sold in Davis County. They come in Bronze, Silver and Gold tiers. Bronze has the lowest premium and the highest deductible, Gold is the reverse, Silver sits in the middle and is the only tier with cost-sharing reductions if your income qualifies.
+[00:01:10] Participant: I remember the Silver thing. Can you tell me the prices?
+[00:01:14] Advisor: In Davis County there are two Bronze plans starting at four hundred twelve dollars a month, your Silver at five hundred forty-eight, a Contoso Silver at five hundred ninety-six, and Gold plans from six hundred eighty-eight. Those are before any subsidy.
+[00:01:32] Participant: And my Northwind account helps with that?
+[00:01:35] Advisor: It does. That is the second department you were thinking of. Your HRA balance right now is one thousand eight hundred seventy-five dollars and twenty-five cents, and premium auto-reimbursement is on, so your monthly premium comes back to you automatically. Northwind funds pre-65 retirees like you.
+[00:01:55] Participant: Okay, that is a relief. So between the Silver I have and one of the Golds, which one should I pick?
+[00:02:03] Advisor: That is the one question I cannot answer for you. Choosing a plan is done with a licensed benefit advisor, who looks at your doctors, your metoprolol, your expected visits and your subsidy. What I can do is lay the plans side by side and set up that conversation.
+[00:02:22] Participant: Fair enough. Please do both.
+[00:02:25] Advisor: Will do. You said a couple of questions. What is the other one?
+[00:02:29] Participant: I turn 65 in November of next year. What happens to all of this then? Do I lose the Northwind money?
+[00:02:38] Advisor: Two separate answers. On Medicare: your Initial Enrollment Period is the seven months around your birthday month, so August 2027 through February 2028. Enrolling in the three months before November avoids a gap. Your ACA plan ends when Medicare starts, so people usually pick their Medicare coverage during that window.
+[00:03:02] Participant: And the account?
+[00:03:04] Advisor: Northwind funds both pre-65 and Medicare-eligible retirees, so the HRA continues. The eligible expenses change a little: Medicare premiums and the Part B premium become reimbursable. The advisor will walk you through that too.
+[00:03:20] Participant: That is good to know. I was worried about a gap.
+[00:03:24] Advisor: Understandable. Before then, is there anything you need to change right now? Open enrollment for ACA plans runs November 1 through January 15, and a change made by December 15 starts January 1.
+[00:03:38] Participant: No, I think I want to talk to the advisor before I change anything.
+[00:03:43] Advisor: Then here is the plan. I am creating a handoff for a licensed benefit advisor with your Davis County ACA comparison, your HRA details, and the Medicare transition question for November 2027. How would you like them to reach you?
+[00:03:59] Participant: Chat or email is easiest. rosa.delgado@example.com.
+[00:04:05] Advisor: Noted, chat or email. Expect contact within two business days. You will also see the comparison in your Benefits Marketplace portal under messages.
+[00:04:15] Participant: Thank you, Marcus. That was much less confusing than I expected.
+[00:04:19] Advisor: Glad to hear it. Thank you for calling Benefits Marketplace, Ms. Delgado.

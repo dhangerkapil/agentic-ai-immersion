@@ -1,0 +1,27 @@
+[00:00:02] Advisor: Thank you for calling Benefits Marketplace, this is Jordan. Who do I have the pleasure of speaking with today?
+[00:00:07] Participant: Hi Jordan, this is Evelyn Marsh. I got the letter about the fall enrollment season and I have some questions about my plan.
+[00:00:15] Advisor: Happy to help, Evelyn. Before we look at anything, can I get your participant ID and the ZIP code we have on file?
+[00:00:22] Participant: Sure. The ID on the letter is P-1001 and my ZIP is 84095.
+[00:00:29] Advisor: Thank you, that matches. I see you are in Salt Lake County, retired from Northwind Traders, and currently on the Contoso Advantage Choice HMO. What can I help with?
+[00:00:41] Participant: Two things really. My atorvastatin went up at the pharmacy this year, and I want to make sure I can keep my cardiologist, Dr. Osei. I am wondering if there is something better out there.
+[00:00:56] Advisor: Those are the two most common reasons people call in October. Let me explain what I can do. I can show you how plans in your county compare on cost and drug tiers, and I can explain the enrollment windows. Choosing a plan or enrolling you is done with a licensed benefit advisor, and I can set that up.
+[00:01:14] Participant: That's fine. I mostly want to understand my options first.
+[00:01:19] Advisor: Good. Atorvastatin is on Tier 2 of your current Contoso HMO formulary. Two Medicare Advantage PPO plans sold in Salt Lake County list it on Tier 1: the Fabrikam Medicare Freedom PPO and the Woodgrove Assurance Premier PPO. Tier 1 is usually the lowest copay tier, but the carrier confirms the actual copay.
+[00:01:40] Participant: What do those two cost?
+[00:01:43] Advisor: The Fabrikam PPO has a twenty-nine dollar monthly premium and a five thousand nine hundred dollar out-of-pocket maximum. The Woodgrove PPO is forty-eight dollars a month with a six thousand seven hundred dollar maximum and a nationwide network. Your current Contoso HMO has a zero dollar premium and a four thousand five hundred dollar maximum.
+[00:02:04] Participant: So I would pay a premium and take on a higher maximum to save on the pills.
+[00:02:08] Advisor: That is the trade-off to look at, yes. A licensed advisor can run your actual prescriptions through each plan's drug cost estimator so you see the full year, not just the tier.
+[00:02:20] Participant: And Dr. Osei?
+[00:02:22] Advisor: I cannot confirm from here whether a specific doctor is in a plan's network. PPO plans generally let you see out-of-network doctors at a higher cost, while your HMO requires in-network care and referrals. The advisor checks the provider directory with you before anything is submitted.
+[00:02:41] Participant: Okay. When would I even be able to switch?
+[00:02:45] Advisor: The Annual Enrollment Period runs October 15 through December 7. Any change you make then starts January 1. If you stay on a Medicare Advantage plan, there is also a one-time change window from January 1 to March 31.
+[00:03:02] Participant: So I have a few weeks.
+[00:03:04] Advisor: You do. Would you like me to set up a call with a licensed benefit advisor to go through the comparison and your doctor and drug list?
+[00:03:13] Participant: Yes please. Mornings are best. You can reach me at 801-555-0136.
+[00:03:20] Advisor: Noted, mornings by phone. I am writing up a summary for the advisor: Salt Lake County, currently on the Contoso HMO, interested in atorvastatin tier and keeping Dr. Osei, comparing two PPO plans. No decisions made today.
+[00:03:38] Participant: That's right.
+[00:03:40] Advisor: One more thing. Your HRA balance for this plan year is one thousand two hundred forty dollars and fifty cents, and premium auto-reimbursement is on. If you did move to a plan with a premium, that is where the reimbursement would come from.
+[00:03:56] Participant: Oh good, I forgot about that account.
+[00:04:00] Advisor: The advisor will mention it too. Is there anything else I can help with today?
+[00:04:05] Participant: No, that covers it. Thank you, Jordan.
+[00:04:08] Advisor: Thank you for calling Benefits Marketplace, Evelyn. Expect a call from a licensed benefit advisor within two business days, in the morning. Take care.

@@ -95,8 +95,8 @@ agentic-ai-immersion-day/
 │   ├── infra/                                  # Bicep + per-environment params
 │   └── tests/                                  # unit / integration / smoke
 │
-├── 🏥 wtw-foundry-hosted-agents-labs/          # WTW Via Benefits: Foundry Hosted Agents (FSI: Individual Marketplace)
-│   ├── common/                                 # via_data, foundry_env, guardrails, session_store, message_store
+├── 🏥 foundry-hosted-agents-labs/              # Benefits Marketplace Concierge: Foundry Hosted Agents (individual health insurance marketplace)
+│   ├── common/                                 # benefits_data, foundry_env, guardrails, session_store, message_store
 │   ├── data/                                   # synthetic participants, sponsors, plans, knowledge, golden questions
 │   ├── tools/py_to_ipynb.py                    # script -> notebook converter
 │   └── labs/                                   # lab1-hosted-agent-basics ... stretch6-invocations-toolbox-skills
@@ -474,18 +474,18 @@ python -m pytest tests/unit tests/integration -q
 
 📖 [Architecture + pipeline guide](AgentOps/README.md)
 
-### 🏥 Phase 6: WTW Foundry Hosted Agents Labs (FSI: Individual Marketplace / Via Benefits)
-**Location:** `wtw-foundry-hosted-agents-labs/`
+### 🏥 Phase 6: Foundry Hosted Agents Labs (individual health insurance marketplace)
+**Location:** `foundry-hosted-agents-labs/`
 
-A one-day, pro-code lab sequence for WTW's Via Benefits engineers on **Microsoft Foundry Hosted Agents**:
+A one-day, pro-code lab sequence for engineers building benefits-marketplace agents on **Microsoft Foundry Hosted Agents**:
 Agent Framework code that Foundry builds into a container, versions and scales. Four core labs chain
 artifacts (Lab 1 basics -> Lab 2 knowledge + sessions -> Lab 3 multi-agent handoff with human approval ->
-Lab 4 operate/evaluate/CI) around one use case, the Via Benefits Marketplace Concierge, plus two stretch
+Lab 4 operate/evaluate/CI) around one use case, the Benefits Marketplace Concierge, plus two stretch
 labs (prompt agents & workflow agents; Invocations protocol, Toolbox and Skills). Reuses this repo's dev
 container, `.env` names, pinned requirements and RBAC script; extends the `hosted-agents/` and `AgentOps/`
 patterns. Synthetic data only.
 
-📖 [Lab sequence guide](wtw-foundry-hosted-agents-labs/README.md) • [Use case](wtw-foundry-hosted-agents-labs/USE-CASE.md) • [Setup](wtw-foundry-hosted-agents-labs/SETUP.md)
+📖 [Lab sequence guide](foundry-hosted-agents-labs/README.md) • [Use case](foundry-hosted-agents-labs/USE-CASE.md) • [Setup](foundry-hosted-agents-labs/SETUP.md)
 
 ---
 

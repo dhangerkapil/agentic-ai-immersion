@@ -50,7 +50,7 @@ jupyter>=1.0.0
 ipykernel>=6.29.0
 
 # =============================================================================
-# Linting (wtw-foundry-hosted-agents-labs/ CI: labs/lab4-operate-hosted-agents/.github/workflows/agent-ci.yml)
+# Linting (foundry-hosted-agents-labs/ CI: labs/lab4-operate-hosted-agents/.github/workflows/agent-ci.yml)
 # =============================================================================
 ruff>=0.16.0
 

@@ -1,0 +1,14 @@
+# Runtime dependencies of the benefits-concierge-hosted v2 container (azd ai agent init --dep-resolution remote_build
+# installs this file). Keep it to what main.py imports; workshop-wide packages live in labs/requirements.txt.
+# Never agent-framework[foundry]: the three explicit packages below are what the hosting runtime expects.
+agent-framework
+agent-framework-foundry
+agent-framework-foundry-hosting
+azure-ai-projects
+azure-identity
+python-dotenv
+pydantic>=2
+httpx
+redis
+# Lab 4 turns tracing on with APPLICATIONINSIGHTS_CONNECTION_STRING; the exporter must be in the image already.
+azure-monitor-opentelemetry
