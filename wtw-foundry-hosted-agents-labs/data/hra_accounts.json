@@ -1,0 +1,86 @@
+[
+  {
+    "hra_account_id": "HRA-5001",
+    "participant_id": "P-1001",
+    "plan_year": 2026,
+    "annual_allocation": 3600,
+    "balance": 1240.50,
+    "account_status": "active",
+    "auto_reimbursement_enabled": true,
+    "debit_card": {"status": "active", "last4": "4417"},
+    "claims": [
+      {"claim_id": "CLM-9001", "type": "premium", "amount": 185.0, "submitted": "2026-08-03", "status": "paid", "paid_date": "2026-08-07", "reason": null},
+      {"claim_id": "CLM-9002", "type": "out_of_pocket", "amount": 60.0, "submitted": "2026-09-10", "status": "pending", "paid_date": null, "reason": null}
+    ]
+  },
+  {
+    "hra_account_id": "HRA-5002",
+    "participant_id": "P-1002",
+    "plan_year": 2026,
+    "annual_allocation": 2400,
+    "balance": 415.75,
+    "account_status": "active",
+    "auto_reimbursement_enabled": true,
+    "debit_card": {"status": "active", "last4": "8820"},
+    "claims": [
+      {"claim_id": "CLM-9010", "type": "premium", "amount": 148.0, "submitted": "2026-09-02", "status": "paid", "paid_date": "2026-09-05", "reason": null},
+      {"claim_id": "CLM-9011", "type": "premium", "amount": 148.0, "submitted": "2026-10-01", "status": "pending", "paid_date": null, "reason": null},
+      {"claim_id": "CLM-9012", "type": "dental_vision_premium", "amount": 38.25, "submitted": "2026-08-15", "status": "paid", "paid_date": "2026-08-19", "reason": null}
+    ]
+  },
+  {
+    "hra_account_id": "HRA-5003",
+    "participant_id": "P-1003",
+    "plan_year": 2026,
+    "annual_allocation": 3600,
+    "balance": 2210.00,
+    "account_status": "active",
+    "auto_reimbursement_enabled": false,
+    "debit_card": {"status": "active", "last4": "1093"},
+    "claims": [
+      {"claim_id": "CLM-9003", "type": "out_of_pocket", "amount": 240.0, "submitted": "2026-09-14", "status": "denied", "paid_date": null, "reason": "missing_proof_of_payment"},
+      {"claim_id": "CLM-9004", "type": "part_b_premium", "amount": 202.9, "submitted": "2026-07-08", "status": "paid", "paid_date": "2026-07-12", "reason": null},
+      {"claim_id": "CLM-9005", "type": "out_of_pocket", "amount": 45.0, "submitted": "2026-06-02", "status": "paid", "paid_date": "2026-06-06", "reason": null}
+    ]
+  },
+  {
+    "hra_account_id": "HRA-5004",
+    "participant_id": "P-1004",
+    "plan_year": 2026,
+    "annual_allocation": 2400,
+    "balance": 980.00,
+    "account_status": "active",
+    "auto_reimbursement_enabled": true,
+    "debit_card": {"status": "blocked", "last4": "5561"},
+    "claims": [
+      {"claim_id": "CLM-9020", "type": "premium", "amount": 162.0, "submitted": "2026-09-03", "status": "paid", "paid_date": "2026-09-08", "reason": null},
+      {"claim_id": "CLM-9021", "type": "out_of_pocket", "amount": 35.0, "submitted": "2026-09-22", "status": "denied", "paid_date": null, "reason": "expense_not_eligible"}
+    ]
+  },
+  {
+    "hra_account_id": "HRA-5005",
+    "participant_id": "P-1005",
+    "plan_year": 2026,
+    "annual_allocation": 3600,
+    "balance": 1875.25,
+    "account_status": "active",
+    "auto_reimbursement_enabled": true,
+    "debit_card": {"status": "active", "last4": "2274"},
+    "claims": [
+      {"claim_id": "CLM-9030", "type": "premium", "amount": 548.0, "submitted": "2026-09-01", "status": "paid", "paid_date": "2026-09-04", "reason": null},
+      {"claim_id": "CLM-9031", "type": "premium", "amount": 548.0, "submitted": "2026-10-01", "status": "pending", "paid_date": null, "reason": null},
+      {"claim_id": "CLM-9032", "type": "out_of_pocket", "amount": 120.0, "submitted": "2026-07-19", "status": "paid", "paid_date": "2026-07-24", "reason": null}
+    ]
+  },
+  {
+    "hra_account_id": "HRA-5006",
+    "participant_id": "P-1006",
+    "plan_year": 2026,
+    "annual_allocation": 0,
+    "balance": 0.0,
+    "account_status": "not_funded",
+    "auto_reimbursement_enabled": false,
+    "debit_card": {"status": "not_issued", "last4": null},
+    "claims": []
+  }
+]

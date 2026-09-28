@@ -1,0 +1,11 @@
+# Runtime dependencies of the skills + toolbox concierge container (azd ai agent init --dep-resolution remote_build
+# installs this file). Explicit packages only; never agent-framework[foundry]. Before the workshop, mirror the exact
+# versions from the base repo root requirements.txt lock here.
+agent-framework
+agent-framework-foundry
+agent-framework-foundry-hosting
+azure-ai-projects
+azure-identity
+python-dotenv
+pydantic>=2
+httpx

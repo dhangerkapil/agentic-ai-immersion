@@ -1,0 +1,28 @@
+# Workstation packages for the lab sequence (notebooks and driver scripts), beyond the base repo's pinned
+# requirements (azure-ai-projects 2.x, openai, azure-identity, azure-monitor-opentelemetry, python-dotenv, pydantic,
+# requests, httpx). Install with: pip install --pre -r labs/requirements.txt
+# Each hosted/ folder has its own minimal requirements.txt for the container; never install from those here.
+
+# Agent Framework: the hosted agents (also imported on the workstation to run main.py locally)
+agent-framework
+agent-framework-foundry
+agent-framework-foundry-hosting
+agent-framework-redis
+
+# Lab 2: Foundry IQ knowledge base, project connection, session stores
+azure-search-documents>=11.7.0b2
+redis
+azure-cosmos
+
+# Lab 4: local evaluators, tracing, pipeline docs
+azure-ai-evaluation
+azure-monitor-opentelemetry
+opentelemetry-api
+pyyaml
+
+# Stretch 5: workflow YAML rendering (pyyaml above); Stretch 6: MCP client for Toolbox
+mcp
+
+# Tooling
+ruff
+jupyter

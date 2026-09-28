@@ -1,0 +1,27 @@
+[00:00:03] Advisor: Via Benefits reimbursement accounts, this is Priya. How can I help you today?
+[00:00:08] Participant: Yeah, hi. Harold Bing. I got an email that says my claim was denied and I don't understand why. I sent everything you asked for.
+[00:00:18] Advisor: I'm sorry about the confusion, Mr. Bing. Let's figure it out together. Can I have your participant ID and ZIP code to pull up the account?
+[00:00:26] Participant: P-1003. ZIP is 84604, Provo.
+[00:00:31] Advisor: Thank you, that matches. I have your account open. Which claim is the email about?
+[00:00:37] Participant: It says CLM-9003. Two hundred and forty dollars. That was my share of the MRI back in August.
+[00:00:46] Advisor: I see it. CLM-9003 was submitted September 14 as an out-of-pocket expense for two hundred forty dollars, and it was denied with the reason code missing proof of payment.
+[00:00:59] Participant: Missing proof? I uploaded the bill from the imaging center. It has the date and the amount right on it.
+[00:01:07] Advisor: That bill counts as proof of the expense, and we did receive it. What the reviewer did not find is proof that you paid it. Those are two separate documents under the HRA rules.
+[00:01:20] Participant: That seems like a lot of hoops for two hundred dollars.
+[00:01:24] Advisor: I understand. The rule exists because the account can only reimburse money you have actually spent. The good news is this is the easiest denial to fix.
+[00:01:34] Participant: So what do you need?
+[00:01:37] Advisor: Any one of these works. A bank or credit card statement showing the imaging center, the date and the two hundred forty dollars, and you can black out other lines. A cancelled check, front and back. A receipt from the imaging center marked paid with the payment method. Or a statement from them showing a zero balance.
+[00:01:58] Participant: I paid with my regular credit card. I can get that statement online.
+[00:02:03] Advisor: That is perfect. Download the statement page with that charge, then submit it as a new claim and put the original claim number, CLM-9003, in the notes so the reviewer links them.
+[00:02:16] Participant: A new claim? Not just add it to the old one?
+[00:02:20] Advisor: You can also reply to the denial notice in the portal and attach it there. Either way the reviewer sees the original claim. I cannot upload it for you, but I can flag CLM-9003 for a resubmission follow-up so it gets picked up quickly once your document arrives.
+[00:02:38] Participant: Please do that.
+[00:02:40] Advisor: Done. Flagged for resubmission follow-up. Most claims are reviewed within five business days of the document arriving, and payment goes out two to three business days after approval by direct deposit.
+[00:02:54] Participant: Okay. While I have you, is there anything else sitting out there?
+[00:02:59] Advisor: Your other two claims this year were both paid: the Part B premium reimbursement in July and a smaller out-of-pocket claim in June. Your balance for the plan year is two thousand two hundred ten dollars.
+[00:03:12] Participant: That's more than I thought.
+[00:03:15] Advisor: It is there for premiums and out-of-pocket costs through the plan year, and Northwind lets unused funds roll over for one year. I also notice premium auto-reimbursement is turned off on your account. Would you like information on that?
+[00:03:31] Participant: Maybe another time. Let me deal with this one first.
+[00:03:35] Advisor: Understood. To recap: CLM-9003 was denied for missing proof of payment, a credit card statement showing the charge will fix it, submit it referencing CLM-9003, and I have flagged the claim for follow-up.
+[00:03:50] Participant: Got it. Thanks, Priya. You explained it better than the email did.
+[00:03:55] Advisor: I will pass that along. Thank you for calling Via Benefits, Mr. Bing. Have a good afternoon.

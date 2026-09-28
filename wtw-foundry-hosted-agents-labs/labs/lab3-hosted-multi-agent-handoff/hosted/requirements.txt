@@ -1,0 +1,14 @@
+# Runtime dependencies of the hosted via-triage-hosted container (azd ai agent init --dep-resolution remote_build
+# installs this file inside the Foundry build). Explicit packages only; never agent-framework[foundry] (its extras
+# can make the python_3_14 remote build fail with ResolutionImpossible). Before the workshop, mirror the exact
+# versions from the base repo root requirements.txt lock here.
+agent-framework
+agent-framework-foundry
+agent-framework-foundry-hosting
+azure-ai-projects
+azure-identity
+python-dotenv
+pydantic>=2
+httpx
+# uncomment when VIA_REDIS_URL is set so the session map is shared across replicas
+# redis

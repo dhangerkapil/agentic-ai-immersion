@@ -1,0 +1,24 @@
+[
+  {
+    "sponsor_id": "SP-NORTHWIND",
+    "name": "Northwind Traders Retiree Health Program",
+    "plan_year": 2027,
+    "hra_annual_amount": 3600,
+    "spouse_annual_amount": 1800,
+    "eligibility": "Retirees age 55+ with 10+ years of service",
+    "eligible_expense_types": ["premium", "out_of_pocket", "part_b_premium"],
+    "catastrophic_fund": true,
+    "notes": "Unused balance rolls over up to 1 plan year. Pre-65 retirees and Medicare-eligible retirees are both funded. Catastrophic fund requests are reviewed by a benefit advisor."
+  },
+  {
+    "sponsor_id": "SP-ADATUM",
+    "name": "Adatum Corporation Retiree Medical",
+    "plan_year": 2027,
+    "hra_annual_amount": 2400,
+    "spouse_annual_amount": 1200,
+    "eligibility": "Retirees age 60+ with 15+ years of service. HRA funding begins the month Medicare Part B is effective. Pre-65 retirees have marketplace access without HRA funding.",
+    "eligible_expense_types": ["premium", "part_b_premium", "dental_vision_premium"],
+    "catastrophic_fund": false,
+    "notes": "Unused balance is forfeited at plan year end. Out-of-pocket medical expenses are not reimbursable under this sponsor. Premium auto-reimbursement is available for Medigap, Medicare Advantage and Part D premiums."
+  }
+]

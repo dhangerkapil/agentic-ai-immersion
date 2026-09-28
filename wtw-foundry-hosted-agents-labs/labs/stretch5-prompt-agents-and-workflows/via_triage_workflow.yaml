@@ -1,0 +1,96 @@
+# Stretch 5: declarative triage workflow (WorkflowAgentDefinition, preview).
+# Placeholders in braces are agent names filled in by stretch5_prompt_agents.render_workflow() before the
+# YAML is parsed and sent to project.agents.create_version(definition=WorkflowAgentDefinition(workflow=...)).
+# Shape per the verified sample: kind workflow, OnConversationStart, SetVariable, InvokeAzureAgent (agent.name,
+# conversationId, input.messages, output.messages, autoSend), ConditionGroup, EndConversation.
+# VERIFY against https://learn.microsoft.com/azure/foundry/agents/how-to/workflows before delivery: the Power Fx
+# helpers used (UserMessage, Last().Text, Find, Lower, Char, &, ||).
+kind: workflow
+trigger:
+  kind: OnConversationStart
+  id: on_case_received
+  actions:
+    - kind: SetVariable
+      id: init_case
+      variable: Local.Case
+      value: =UserMessage(System.LastMessageText)
+    - kind: InvokeAzureAgent
+      id: triage
+      agent:
+        name: {triage}
+      conversationId: =System.ConversationId
+      input:
+        messages: =Local.Case
+      output:
+        messages: Local.Triage
+        autoSend: true
+    - kind: SetVariable
+      id: init_route
+      variable: Local.Route
+      value: =Lower(Last(Local.Triage).Text)
+    - kind: SetVariable
+      id: init_drafts
+      variable: Local.Drafts
+      value: '=""'
+    - kind: ConditionGroup
+      id: route_marketplace
+      conditions:
+        - id: if_marketplace
+          condition: '=!IsBlank(Find("route: marketplace", Local.Route)) || !IsBlank(Find("route: both", Local.Route))'
+          actions:
+            - kind: InvokeAzureAgent
+              id: marketplace
+              agent:
+                name: {marketplace}
+              conversationId: =System.ConversationId
+              input:
+                messages: '=UserMessage("TRIAGE CASE (marketplace part). Answer only the plan, enrollment period and coverage questions." & Char(10) & Last(Local.Triage).Text)'
+              output:
+                messages: Local.MarketplaceDraft
+                autoSend: true
+            - kind: SetVariable
+              id: add_marketplace_draft
+              variable: Local.Drafts
+              value: '=Local.Drafts & Char(10) & "MARKETPLACE DRAFT:" & Char(10) & Last(Local.MarketplaceDraft).Text'
+    - kind: ConditionGroup
+      id: route_accounts
+      conditions:
+        - id: if_accounts
+          condition: '=!IsBlank(Find("route: accounts", Local.Route)) || !IsBlank(Find("route: both", Local.Route))'
+          actions:
+            - kind: InvokeAzureAgent
+              id: accounts
+              agent:
+                name: {accounts}
+              conversationId: =System.ConversationId
+              input:
+                messages: '=UserMessage("TRIAGE CASE (accounts part). Answer only the HRA, claim, card and reimbursement questions." & Char(10) & Last(Local.Triage).Text)'
+              output:
+                messages: Local.AccountsDraft
+                autoSend: true
+            - kind: SetVariable
+              id: add_accounts_draft
+              variable: Local.Drafts
+              value: '=Local.Drafts & Char(10) & "ACCOUNTS DRAFT:" & Char(10) & Last(Local.AccountsDraft).Text'
+    - kind: InvokeAzureAgent
+      id: compliance
+      agent:
+        name: {compliance}
+      conversationId: =System.ConversationId
+      input:
+        messages: '=UserMessage("COMPLIANCE REVIEW REQUEST" & Char(10) & Last(Local.Triage).Text & Char(10) & Local.Drafts)'
+      output:
+        messages: Local.Review
+        autoSend: true
+    - kind: InvokeAzureAgent
+      id: handoff
+      agent:
+        name: {handoff}
+      conversationId: =System.ConversationId
+      input:
+        messages: '=UserMessage("BUILD HANDOFF PACKET" & Char(10) & Last(Local.Triage).Text & Char(10) & Local.Drafts & Char(10) & "COMPLIANCE REVIEW:" & Char(10) & Last(Local.Review).Text)'
+      output:
+        messages: Local.Packet
+        autoSend: true
+    - kind: EndConversation
+      id: case_closed
