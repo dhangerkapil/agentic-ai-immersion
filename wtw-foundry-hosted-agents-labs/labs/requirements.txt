@@ -1,28 +1,12 @@
-# Workstation packages for the lab sequence (notebooks and driver scripts), beyond the base repo's pinned
-# requirements (azure-ai-projects 2.x, openai, azure-identity, azure-monitor-opentelemetry, python-dotenv, pydantic,
-# requests, httpx). Install with: pip install --pre -r labs/requirements.txt
-# Each hosted/ folder has its own minimal requirements.txt for the container; never install from those here.
-
-# Agent Framework: the hosted agents (also imported on the workstation to run main.py locally)
-agent-framework
-agent-framework-foundry
-agent-framework-foundry-hosting
-agent-framework-redis
-
-# Lab 2: Foundry IQ knowledge base, project connection, session stores
-azure-search-documents>=11.7.0b2
-redis
-azure-cosmos
-
-# Lab 4: local evaluators, tracing, pipeline docs
-azure-ai-evaluation
-azure-monitor-opentelemetry
-opentelemetry-api
-pyyaml
-
-# Stretch 5: workflow YAML rendering (pyyaml above); Stretch 6: MCP client for Toolbox
-mcp
-
-# Tooling
-ruff
-jupyter
+# Workstation packages for the lab sequence (notebooks and driver scripts).
+#
+# RECONCILED WITH THE BASE REPO LOCK: every package this folder needs (agent-framework +
+# agent-framework-foundry + agent-framework-foundry-hosting + agent-framework-redis, azure-ai-projects,
+# azure-search-documents, redis, azure-cosmos, azure-ai-evaluation, azure-monitor-opentelemetry,
+# opentelemetry-api, PyYAML, mcp, jupyter, ruff) is already pinned in the base repo root
+# requirements.txt, so this file is a pointer, not a second lock. Install from the repo root:
+#   pip install -r requirements.txt
+#
+# Each hosted/ folder still has its own minimal requirements.txt for the container (the ZIP azd
+# uploads) — never install those on the workstation, and never install this file with --pre; the
+# root lock pins exact versions.

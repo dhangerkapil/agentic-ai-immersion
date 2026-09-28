@@ -28,7 +28,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 LABS_DIR = Path(__file__).resolve().parent              # labs/
-ROOT = LABS_DIR.parent                                   # WTW-Foundry-Agents-Labs/ (where common/ and data/ live)
+ROOT = LABS_DIR.parent                                   # wtw-foundry-hosted-agents-labs/ (where common/ and data/ live)
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 

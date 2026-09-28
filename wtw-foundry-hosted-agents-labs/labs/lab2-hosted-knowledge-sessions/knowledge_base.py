@@ -22,7 +22,7 @@ import re
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[2]      # WTW-Foundry-Agents-Labs/ (common/ and data/ live here)
+ROOT = Path(__file__).resolve().parents[2]      # wtw-foundry-hosted-agents-labs/ (common/ and data/ live here)
 sys.path.insert(0, str(ROOT))
 from common import via_data, foundry_env, guardrails  # noqa: E402,F401
 

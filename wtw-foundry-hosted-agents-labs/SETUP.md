@@ -11,7 +11,7 @@ these labs and none should be added to `.env`.
 ```
 agentic-ai-immersion/                  base repo (dev container, .env, requirements lock, RBAC script)
   .env                                 shared variables, read by common/foundry_env.load_env()
-  WTW-Foundry-Agents-Labs/             this folder
+  wtw-foundry-hosted-agents-labs/             this folder
     common/                            via_data, foundry_env, guardrails, session_store, message_store
     data/                              synthetic systems of record and knowledge base
     tools/py_to_ipynb.py               script -> notebook converter (stdlib only)
@@ -21,7 +21,7 @@ agentic-ai-immersion/                  base repo (dev container, .env, requireme
 ```
 
 `load_env()` reads, in order and without overriding anything already exported: the base repo root `.env`,
-then `WTW-Foundry-Agents-Labs/.env`, then `./.env`. Keep one `.env` at the base repo root; the others are for
+then `wtw-foundry-hosted-agents-labs/.env`, then `./.env`. Keep one `.env` at the base repo root; the others are for
 per-environment overrides (Lab 4 `envs/*.example`).
 
 ## 1a. Where things run
@@ -82,7 +82,7 @@ repo datasheet lists tested regions):
 | azd + `azure.ai.agents` extension | Labs 1 to 4, S6 (every hosted deploy) | `azd config set auth.useAzCliAuth true`, `azd extension install azure.ai.agents`. Deployer needs Foundry Project Manager on the project |
 | Azure AI Search with Foundry IQ | Lab 2 (and every later lab through `VIA_KB_MCP_URL`) | Enable system-assigned managed identity on the search service. Semantic ranker: free or standard |
 | Project connection to the Foundry IQ knowledge base | Lab 2 | Created by the lab code with an ARM PUT on `{PROJECT_RESOURCE_ID}/connections/via-benefits-kb-connection` (authType ProjectManagedIdentity, category RemoteTool). Needs a role that can write connections (Azure AI Owner or Contributor on the account) |
-| Redis | Lab 2 YOUR TURN (scale-out), Lab 3, S6; test/prod environments | Locally `docker run -d --name redis-workshop -p 6379:6379 redis:7-alpine` and `VIA_REDIS_URL=redis://localhost:6379/0`. Azure: Azure Managed Redis with Entra auth (`rediss://`). Optional: the file store carries the demo without it |
+| Redis | Lab 2 YOUR TURN (scale-out), Lab 3, S6; test/prod environments | Locally `docker run -d -p 6379:6379 redis:latest` and `VIA_REDIS_URL=redis://localhost:6379/0`. Azure: Azure Managed Redis with Entra auth (`rediss://`). Optional: the file store carries the demo without it |
 | Application Insights | Lab 4 and the hosted agents' tracing | Connect it to the project (Foundry portal: project, Tracing, connect) so `telemetry.get_application_insights_connection_string()` works; set the connection string on the hosted agent with `azd env set` |
 | GitHub repository with Environments `dev`, `test`, `prod` and an Entra app with OIDC federated credentials | Lab 4 pipeline (optional on the day) | See `labs/lab4-operate-hosted-agents/infra/README.md` |
 | Foundry Toolbox (preview) | Stretch 6 skills agent, optional | Create a Toolbox with `web_search` and `code_interpreter` in the project (base repo `AgentOps/src/tools/toolbox_config.py` pattern), set `TOOLBOX_NAME` and `TOOLBOX_MCP_URL` on the hosted agent. Region-limited; skip if unavailable |
@@ -110,14 +110,22 @@ Run the base repo RBAC script first, then confirm these. Propagation takes 5 to 
 
 ## 6. Python packages
 
-Python 3.12 or newer. The base repo's pinned requirements cover `azure-ai-projects` 2.x, `openai`,
-`azure-identity`, `azure-monitor-opentelemetry`, `python-dotenv`, `pydantic`, `requests`, `httpx`.
+Python 3.12 or newer (the dev container ships 3.14). Every workstation package these labs need —
+`agent-framework`, `agent-framework-foundry`, `agent-framework-foundry-hosting`, `agent-framework-redis`,
+`azure-ai-projects`, `openai`, `azure-identity`, `azure-search-documents`, `redis`, `azure-cosmos`,
+`azure-ai-evaluation`, `azure-monitor-opentelemetry`, `opentelemetry-api`, `PyYAML`, `mcp`, `ruff`, `jupyter`,
+`python-dotenv`, `pydantic`, `requests`, `httpx` — is already pinned in the base repo root
+`requirements.txt`. Install from the repo root (the dev container's `postCreateCommand` already does this):
+
+```bash
+pip install -r requirements.txt
+```
 
 | Where | File | Contents |
 |---|---|---|
-| Workstation (notebooks, driver scripts, running `main.py` locally) | `labs/requirements.txt` (`pip install --pre -r labs/requirements.txt`) | `agent-framework`, `agent-framework-foundry`, `agent-framework-foundry-hosting`, `agent-framework-redis`, `azure-search-documents>=11.7.0b2`, `redis`, `azure-cosmos`, `azure-ai-evaluation`, `pyyaml`, `mcp`, `ruff`, `jupyter` |
-| Container (each hosted agent) | `labs/labN-*/hosted/requirements.txt` | minimal explicit pins: `agent-framework`, `agent-framework-foundry`, `agent-framework-foundry-hosting`, `azure-ai-projects`, `azure-identity`, `python-dotenv`, plus `httpx`, `redis`, `azure-monitor-opentelemetry` where used. Never `agent-framework[foundry]` |
-| Tools | `azd` + `azure.ai.agents` extension, Docker Desktop (dev container and local Redis) | |
+| Workstation (notebooks, driver scripts, running `main.py` locally) | base repo root `requirements.txt` (`labs/requirements.txt` is a pointer to it, not a second lock) | see the package list above |
+| Container (each hosted agent) | `labs/labN-*/hosted/requirements.txt` | minimal explicit pins: `agent-framework`, `agent-framework-foundry`, `agent-framework-foundry-hosting`, `azure-ai-projects`, `azure-identity`, `python-dotenv`, plus `httpx`, `redis`, `azure-monitor-opentelemetry` where used. Never `agent-framework[foundry]`. These ship inside the container and are pinned separately from the workstation lock; mirror the exact root versions here before the workshop (each file says so) |
+| Tools | `azd` + `azure.ai.agents` extension (`azd extension install azure.ai.agents`, same as `hosted-agents/README.md`), Docker Desktop (dev container and local Redis) | |
 
 `common/via_data.py`, `common/guardrails.py`, `common/session_store.py` and `common/message_store.py` need
 nothing beyond the standard library for their self-tests, which is how they run on a laptop with no Azure packages.
@@ -128,7 +136,7 @@ Notebooks are generated from the scripts with `python tools/py_to_ipynb.py <scri
 Run from the base repo root inside the dev container, after `az login --tenant $TENANT_ID`.
 
 ```bash
-cd WTW-Foundry-Agents-Labs
+cd wtw-foundry-hosted-agents-labs
 
 # 1. Data and helpers, no Azure needed. Expect "ALL CHECKS PASSED" and two "PASS" lines.
 python common/via_data.py
@@ -204,7 +212,7 @@ Do this on the exact room account and network you will use. Tick every line.
       `python labs/lab2-hosted-knowledge-sessions/hosted/test_local.py --deployed` prints `PASS`; the version shows
       `active` in the portal. Note how long the first build took.
 - [ ] `azd` login and the `azure.ai.agents` extension install on the room network without a proxy error.
-- [ ] Docker Desktop runs the dev container and `redis:7-alpine` on the room laptops (Lab 2 YOUR TURN).
+- [ ] Docker Desktop runs the dev container and `redis:latest` on the room laptops (Lab 2 YOUR TURN).
 - [ ] `python labs/lab4-operate-hosted-agents/lab4_operate.py --limit 3 --skip-judges` passes and a
       `via.golden_question` span shows up in Application Insights.
 - [ ] Remote attendees: the recording and screen share show the terminal font at a readable size; the

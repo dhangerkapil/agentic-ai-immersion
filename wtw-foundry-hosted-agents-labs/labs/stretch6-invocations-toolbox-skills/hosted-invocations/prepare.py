@@ -18,7 +18,7 @@ import shutil
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-ROOT = HERE.parents[2]                                   # WTW-Foundry-Agents-Labs/
+ROOT = HERE.parents[2]                                   # wtw-foundry-hosted-agents-labs/
 SOURCES = {"common": ROOT / "common", "data": ROOT / "data"}   # target (relative to hosted/) -> source
 IGNORE = shutil.ignore_patterns("__pycache__", "*.pyc", ".pytest_cache", ".*_selftest")
 
@@ -28,7 +28,7 @@ def vendor(extra: dict[str, Path] | None = None) -> dict[str, int]:
     counts: dict[str, int] = {}
     for name, source in {**SOURCES, **(extra or {})}.items():
         if not source.exists():
-            raise SystemExit(f"[hosted] missing {source}; run from a full checkout of WTW-Foundry-Agents-Labs")
+            raise SystemExit(f"[hosted] missing {source}; run from a full checkout of wtw-foundry-hosted-agents-labs")
         target = HERE / name
         shutil.rmtree(target, ignore_errors=True)
         target.parent.mkdir(parents=True, exist_ok=True)

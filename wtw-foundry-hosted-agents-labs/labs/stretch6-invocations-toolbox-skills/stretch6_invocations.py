@@ -39,7 +39,7 @@ import sys
 import time
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[2]      # WTW-Foundry-Agents-Labs/
+ROOT = Path(__file__).resolve().parents[2]      # wtw-foundry-hosted-agents-labs/
 LABS_DIR = ROOT / "labs"
 LAB_DIR = Path(__file__).resolve().parent
 for folder in (ROOT, LABS_DIR, LAB_DIR / "hosted-invocations"):

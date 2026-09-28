@@ -37,7 +37,7 @@ import time
 import uuid
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[2]      # WTW-Foundry-Agents-Labs/ (common/ and data/ live here)
+ROOT = Path(__file__).resolve().parents[2]      # wtw-foundry-hosted-agents-labs/ (common/ and data/ live here)
 sys.path.insert(0, str(ROOT))
 from common import via_data, foundry_env, guardrails  # noqa: E402
 
@@ -246,7 +246,7 @@ def print_deploy(hosted: dict | None = None) -> None:
     print("[lab2]   is still starting: read the logstream in the portal and retry.")
 
 
-# %% YOUR TURN (5 min): scale out. Start Redis (docker run -d --name redis-workshop -p 6379:6379 redis:7-alpine),
+# %% YOUR TURN (5 min): scale out. Start Redis (docker run -d -p 6379:6379 redis:latest),
 # export VIA_REDIS_URL=redis://localhost:6379/0, then run TWO servers: --port 8088 and --port 8089. Send turn 1
 # to 8088 and turn 3 to 8089 with the same session id. Two replicas, one participant, one history.
 # Solution (from a second terminal, after `python lab2_hosted_knowledge.py --demo-only --no-restart`):

@@ -1,6 +1,6 @@
 # Lab 4: AgentOps pipeline for the via-concierge-hosted agent (Lab 2 hosted/ folder).
 # Copy this file to <repo root>/.github/workflows/agent-ci.yml. Paths below assume the labs folder lives at
-# WTW-Foundry-Agents-Labs/ in the repo (drop-in to github.com/dhangerkapil/agentic-ai-immersion).
+# wtw-foundry-hosted-agents-labs/ in the repo (drop-in to github.com/dhangerkapil/agentic-ai-immersion).
 #
 # Stages: validate (compile, self-tests, notebook check; no Azure) -> evaluate (eval gate against a hosted/main.py
 # started on the runner, Entra via OIDC) -> deploy dev (azd from source) -> smoke -> promote (manual dispatch to
@@ -14,12 +14,12 @@ on:
   push:
     branches: [main]
     paths:
-      - "WTW-Foundry-Agents-Labs/common/**"
-      - "WTW-Foundry-Agents-Labs/data/**"
-      - "WTW-Foundry-Agents-Labs/labs/**"
+      - "wtw-foundry-hosted-agents-labs/common/**"
+      - "wtw-foundry-hosted-agents-labs/data/**"
+      - "wtw-foundry-hosted-agents-labs/labs/**"
   pull_request:
     paths:
-      - "WTW-Foundry-Agents-Labs/**"
+      - "wtw-foundry-hosted-agents-labs/**"
   workflow_dispatch:
     inputs:
       target_environment:
@@ -37,10 +37,10 @@ permissions:
   pull-requests: write # eval summary comment
 
 env:
-  WTW_DIR: WTW-Foundry-Agents-Labs
-  LABS_DIR: WTW-Foundry-Agents-Labs/labs
-  HOSTED_DIR: WTW-Foundry-Agents-Labs/labs/lab2-hosted-knowledge-sessions/hosted
-  LAB4_DIR: WTW-Foundry-Agents-Labs/labs/lab4-operate-hosted-agents
+  WTW_DIR: wtw-foundry-hosted-agents-labs
+  LABS_DIR: wtw-foundry-hosted-agents-labs/labs
+  HOSTED_DIR: wtw-foundry-hosted-agents-labs/labs/lab2-hosted-knowledge-sessions/hosted
+  LAB4_DIR: wtw-foundry-hosted-agents-labs/labs/lab4-operate-hosted-agents
   PYTHON_VERSION: "3.12"
 
 jobs:
@@ -56,8 +56,10 @@ jobs:
       - name: Install
         run: |
           python -m pip install --upgrade pip
+          # Workstation packages (agent-framework, azure-search-documents, azure-ai-evaluation, ruff,
+          # jupyter, ...) are already pinned in the repo root requirements.txt; labs/requirements.txt is
+          # a pointer, not a second lock — see that file.
           pip install -r requirements.txt
-          pip install --pre -r ${LABS_DIR}/requirements.txt
       - name: Ruff
         run: ruff check ${WTW_DIR} --select E,F,W --ignore E501
       - name: Compile every lab and hosted file
@@ -91,7 +93,6 @@ jobs:
       - name: Install
         run: |
           pip install -r requirements.txt
-          pip install --pre -r ${LABS_DIR}/requirements.txt
       - name: Azure login (OIDC, no secrets)
         uses: azure/login@v2
         with:

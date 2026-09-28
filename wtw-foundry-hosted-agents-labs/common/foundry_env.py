@@ -20,7 +20,7 @@ import os
 from pathlib import Path
 from typing import Any
 
-ROOT = Path(__file__).resolve().parents[1]          # WTW-Foundry-Agents-Labs/
+ROOT = Path(__file__).resolve().parents[1]          # wtw-foundry-hosted-agents-labs/
 BASE_REPO_ROOT = ROOT.parent                        # agentic-ai-immersion/ when dropped into the base repo
 
 DEFAULTS: dict[str, str] = {
@@ -82,7 +82,7 @@ def load_env(verbose: bool = False) -> dict[str, str]:
     """Load .env files and return the workshop variables with defaults applied.
 
     Precedence (highest first): variables already exported in the process, then the base repo root
-    .env, then WTW-Foundry-Agents-Labs/.env, then ./.env. Values are also placed in os.environ so
+    .env, then wtw-foundry-hosted-agents-labs/.env, then ./.env. Values are also placed in os.environ so
     Azure SDKs and the labs' own os.environ.get(...) calls see the same thing.
     """
     seen: set[Path] = set()

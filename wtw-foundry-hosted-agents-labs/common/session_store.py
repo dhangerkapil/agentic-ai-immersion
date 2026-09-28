@@ -153,7 +153,7 @@ class FileSessionStore:
 class RedisSessionStore:
     """redis-py backed store. Key via:session:<id>, value JSON, TTL VIA_SESSION_TTL_SECONDS (default 7 days).
 
-    Local Redis for the workshop: docker run -d --name redis-workshop -p 6379:6379 redis:7-alpine
+    Local Redis for the workshop: docker run -d -p 6379:6379 redis:latest
     then VIA_REDIS_URL=redis://localhost:6379/0. Entra-authenticated Azure Managed Redis uses a
     rediss:// URL; pass a token-refreshing credential through the `client` argument in that case.
     """

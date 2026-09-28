@@ -38,7 +38,7 @@ import uuid
 from pathlib import Path
 from typing import Any
 
-ROOT = Path(__file__).resolve().parents[2]      # WTW-Foundry-Agents-Labs/ (common/ and data/ live here)
+ROOT = Path(__file__).resolve().parents[2]      # wtw-foundry-hosted-agents-labs/ (common/ and data/ live here)
 sys.path.insert(0, str(ROOT))
 from common import via_data, foundry_env, guardrails  # noqa: E402
 

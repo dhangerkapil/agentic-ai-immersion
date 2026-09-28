@@ -169,7 +169,7 @@ class FileMessageStore:
 class RedisMessageStore:
     """redis-py backed store. Key via:messages:<session_id> is a list; every write refreshes the TTL.
 
-    Local Redis for the workshop: docker run -d --name redis-workshop -p 6379:6379 redis:7-alpine and
+    Local Redis for the workshop: docker run -d -p 6379:6379 redis:latest and
     VIA_REDIS_URL=redis://localhost:6379/0. Azure Managed Redis with Entra: a rediss:// URL and a
     token-refreshing client passed through `client`.
     """

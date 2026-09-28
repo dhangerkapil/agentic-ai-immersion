@@ -62,7 +62,7 @@ many replicas as load needs. Two things must therefore live outside the containe
 in `common/`:
 
 * `common/message_store.py`: the conversation history the agent reads and appends each turn. Redis when
-  `VIA_REDIS_URL` is set (`docker run -d --name redis-workshop -p 6379:6379 redis:7-alpine` locally; the
+  `VIA_REDIS_URL` is set (`docker run -d -p 6379:6379 redis:latest` locally; the
   base repo already uses this), files under `labs/artifacts/` otherwise. Same code path.
 * `common/session_store.py`: the session map, the one fact the client must never lose: session id to
   conversation, last response id, turn count, and in Lab 3 the pending handoff packet. File, Redis or
@@ -74,7 +74,7 @@ live sessions). Lab 3 relies on it for the human approval step. Lab 4 shows roll
 ## Folder map
 
 ```
-WTW-Foundry-Agents-Labs/
+wtw-foundry-hosted-agents-labs/
   README.md                this file
   USE-CASE.md              use case spec, scenarios S1-S3, agent roles
   SETUP.md                 environment: where things run, env vars, models, connections, RBAC, verification, proctor checklist

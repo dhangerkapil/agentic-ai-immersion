@@ -18,6 +18,10 @@
     so the managed Foundry services can reach it. It is idempotent: existing
     assignments are detected and skipped.
 
+    It also grants the two project-scoped roles wtw-foundry-hosted-agents-labs/ needs for
+    hosted agents: Foundry Project Manager (deploy with azd) and Foundry Agent Consumer
+    (invoke a deployed hosted agent), on top of the account-scoped Foundry User role above.
+
     Authentication is Entra-only (no API keys). Run `az login` first.
 
 .PARAMETER SubscriptionId
@@ -72,6 +76,10 @@ $PSNativeCommandUseErrorActionPreference = $false
 # renamed (Azure AI User -> Foundry User) and the name may not resolve everywhere.
 $FOUNDRY_USER_ROLE = "53ca6127-db72-4b80-b1b0-d745d6d5456d"
 
+# Roles needed by wtw-foundry-hosted-agents-labs/ hosted-agent deploy/invoke split (by GUID, same reason).
+$FOUNDRY_PROJECT_MANAGER_ROLE = "eadc314b-1a2d-4efa-be10-5d325db5065e"   # deployers: azd ai agent init / azd up
+$FOUNDRY_AGENT_CONSUMER_ROLE = "eed3b665-ab3a-47b6-8f48-c9382fb1dad6"    # invokers: call a deployed hosted agent
+
 function Assert-AzLogin {
     try { az account show -o none 2>$null } catch { }
     if ($LASTEXITCODE -ne 0) { throw "Not logged in. Run 'az login' first." }
@@ -113,6 +121,7 @@ Assert-AzLogin
 
 # ── Resolve scopes ───────────────────────────────────────────────────────────
 $accountScope = "/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroup/providers/Microsoft.CognitiveServices/accounts/$AccountName"
+$projectScope = "$accountScope/projects/$ProjectName"
 $storageScope = if ($StorageAccountName) { "/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroup/providers/Microsoft.Storage/storageAccounts/$StorageAccountName" } else { $null }
 $searchScope  = if ($SearchServiceName)  { "/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroup/providers/Microsoft.Search/searchServices/$SearchServiceName" } else { $null }
 
@@ -150,6 +159,12 @@ if ($searchScope) {
     Grant-Role -PrincipalId $userId -PrincipalType "User" -Role "Search Index Data Reader" -Scope $searchScope -Label "you"
     Grant-Role -PrincipalId $userId -PrincipalType "User" -Role "Search Service Contributor" -Scope $searchScope -Label "you"
 }
+
+# wtw-foundry-hosted-agents-labs/ hosted-agent deploy/invoke split. One proctor typically deploys for the
+# room (Foundry Project Manager); every attendee still needs to invoke a deployed agent (Foundry Agent
+# Consumer), on top of the "Foundry User" role already granted above.
+Grant-Role -PrincipalId $userId -PrincipalType "User" -Role $FOUNDRY_PROJECT_MANAGER_ROLE -Scope $projectScope -Label "you (hosted-agent deployer)"
+Grant-Role -PrincipalId $userId -PrincipalType "User" -Role $FOUNDRY_AGENT_CONSUMER_ROLE -Scope $projectScope -Label "you (hosted-agent invoker)"
 
 # ── Project managed identity roles ───────────────────────────────────────────
 Write-Host "`n🤖 Assigning PROJECT managed-identity roles..." -ForegroundColor White

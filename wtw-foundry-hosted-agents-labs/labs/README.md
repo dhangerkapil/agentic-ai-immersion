@@ -126,7 +126,7 @@ Rule of thumb: **notebook = the learner's cockpit** (build, deploy, call, inspec
 - The kill-and-restart demo in Lab 2 is the moment of the day. Rehearse it: server log shows `[hosted] history: file (...)` or `redis (...)`, two pids in the continuity line.
 - Foundry Project Manager is needed for every `azd up`. If the room does not have it, one proctor deploys and everyone calls the deployed agent with `hosted/test_local.py --deployed`; the local `python main.py` path needs no deploy rights.
 - RBAC propagation is the number one failure. Assign roles at least 30 minutes before the lab that needs them (SETUP.md section 5) and re-check the project managed identity and the hosted agent identity in the portal, not from memory.
-- Redis: `docker run -d --name redis-workshop -p 6379:6379 redis:7-alpine` on each laptop for the Lab 2 YOUR TURN; the base repo already uses this container for `threads/2`. Without Docker, the file store fallback carries the demo.
+- Redis: `docker run -d -p 6379:6379 redis:latest` on each laptop for the Lab 2 YOUR TURN; the base repo already uses this container for `threads/2`. Without Docker, the file store fallback carries the demo.
 - Preview features are marked in every README and every `# VERIFY` comment: workflow YAML (S5), `agent_framework.observability`, hosted-agent session handling in `ResponsesHostServer`, hosted agents as Foundry eval targets. Verify them against the linked docs the week before.
 - Remote attendees: bookmark the portal blades you will click (Agents > versions, Observability > Tracing, Azure AI Search > Knowledge bases, Management center > Connections).
 

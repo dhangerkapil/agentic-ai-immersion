@@ -39,7 +39,7 @@ import time
 import uuid
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[2]      # WTW-Foundry-Agents-Labs/
+ROOT = Path(__file__).resolve().parents[2]      # wtw-foundry-hosted-agents-labs/
 LABS_DIR = ROOT / "labs"
 LAB_DIR = Path(__file__).resolve().parent
 for folder in (ROOT, LABS_DIR):
@@ -306,7 +306,7 @@ def record_deployment(version: str, status: str = "active") -> dict:
 # Run: python lab3_hosted_multi_agent.py --auto-approve --scenario S2 --restart-between-turns
 # The server is killed after the pending packet and started again before "approve". The reply shows
 # resume_path=session_store: the paused workflow is gone, the packet in common.session_store is not, so the
-# decision still completes. Then set VIA_REDIS_URL (docker run -d -p 6379:6379 redis:7-alpine) and run again:
+# decision still completes. Then set VIA_REDIS_URL (docker run -d -p 6379:6379 redis:latest) and run again:
 # now a second replica could have answered. Read artifacts/lab3/sessions/*.json to see what was stored.
 
 # %% YOUR TURN (10 min): replace the keyword classifier with a model.
