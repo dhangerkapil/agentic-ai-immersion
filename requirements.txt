@@ -20,7 +20,7 @@ agent-framework-foundry-hosting==1.0.0a260618
 agent-framework-foundry-local==1.0.0b260521
 agent-framework-github-copilot==1.0.0rc1
 agent-framework-lab==1.0.0b251024
-agent-framework-mem0==1.0.0b260609
+agent-framework-mem0==1.0.0b261015
 agent-framework-ollama==1.0.0b260521
 agent-framework-openai==1.8.2
 agent-framework-orchestrations==1.0.0
